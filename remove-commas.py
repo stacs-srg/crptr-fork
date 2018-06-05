@@ -6,7 +6,7 @@
 import csv
 rec = []
 
-dataset_file = csv.DictReader(open('input-files/birth-geco-id-exp25.csv'))
+dataset_file = csv.DictReader(open('input-files/birth-30.csv'))
 dataset = list(dataset_file)
 
 for d in dataset:
@@ -16,7 +16,7 @@ for d in dataset:
             print d[key]
 
 fieldnames = dataset[0].keys()
-csvfile = open('input-files/birth-geco-id-exp25-comma-fix.csv','wb')
+csvfile = open('input-files/birth-30-removed-commas.csv','wb')
 csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
 csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
 for r in dataset:
