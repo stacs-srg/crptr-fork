@@ -7,7 +7,7 @@ import positionfunctions
 # ===============================================================================
 #attr_name_list Need to be included in this model to allow index selection from records for record level corruptions
 
-attr_name_list = ['crptr-record','FirstName', 'LastName','Gender','DateofBirth','FatherFirstName','FatherLastName', 'FatherOccupation',	'MotherFirstName', 'MotherLastName', 'MotherOccupation']
+#attr_name_list = ['crptr-record','FirstName', 'LastName','Gender','DateofBirth','FatherFirstName','FatherLastName', 'FatherOccupation',	'MotherFirstName', 'MotherLastName', 'MotherOccupation']
 
 class CorruptRecord:
   """Base class for the definition of corruptor that is applied on a single
@@ -157,10 +157,12 @@ class CorruptSwapAttributes(CorruptRecord):
 
   # ---------------------------------------------------------------------------
 
-  def __init__(self, **kwargs):
+  def __init__(self, attr_name_list, **kwargs):
     """Constructor. Process the derived keywords first, then call the base
        class constructor.
     """
+
+    self.attr_name_list = attr_name_list[1:]
 
     self.attr1 = None
     self.attr2 = None
@@ -199,8 +201,8 @@ class CorruptSwapAttributes(CorruptRecord):
   def corrupt_value(self, in_list):
     """Simply return the missing value string.
     """
-    attr1_idx = attr_name_list.index(self.attr1)
-    attr2_idx = attr_name_list.index(self.attr2)
+    attr1_idx = self.attr_name_list.index(self.attr1)
+    attr2_idx = self.attr_name_list.index(self.attr2)
     attr1_val = in_list[attr1_idx]
     attr2_val = in_list[attr2_idx]
     new_list = in_list[:]
@@ -237,10 +239,12 @@ class CorruptOverflowAttributes(CorruptRecord):
 
   # ---------------------------------------------------------------------------
 
-  def __init__(self, **kwargs):
+  def __init__(self, attr_name_list, **kwargs):
     """Constructor. Process the derived keywords first, then call the base
        class constructor.
     """
+    self.attr_name_list = attr_name_list
+
     self.attr1 = None
     self.attr2 = None
     self.overflow_level = None
@@ -288,8 +292,8 @@ class CorruptOverflowAttributes(CorruptRecord):
   def corrupt_value(self, in_list):
     """Simply return the missing value string.
     """
-    attr1_idx = attr_name_list.index(self.attr1)
-    attr2_idx = attr_name_list.index(self.attr2)
+    attr1_idx = self.attr_name_list.index(self.attr1)
+    attr2_idx = self.attr_name_list.index(self.attr2)
     attr1_val = in_list[attr1_idx]
     attr2_val = in_list[attr2_idx]
     new_list = in_list[:]

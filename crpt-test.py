@@ -24,19 +24,23 @@ import positionfunctions
 import crptr
 import corruptvalue # Main classes to corrupt attribute values of records
 import corruptrecord # Main classes to corrupt whole records
+import Utils
+import time
 
 # read in source file
-rec_dict = {}
-with open("input-files/birth-30-removed-commas.csv","r") as f:
-    dataset = csv.reader(f, delimiter=",")
-    for row in dataset:
-        if not row[0] in rec_dict:
-            rec_dict[row[0]]=[]
-        for value in row[1:]:
-            # print row[1:]
-            # print value
-            rec_dict[row[0]].append(value)
 
+inputFile = "input-files/birth-30.csv"
+outputFile = "output-files/birth-30-out.csv"
+tempFile = "temp.csv"
+
+# handle commas
+Utils.removeCommas(inputFile, tempFile)
+
+# add crptr ids
+Utils.addCryptIDs(tempFile, tempFile)
+
+# read in source file
+rec_dict = Utils.readInFile(tempFile)
 
 random.seed(42)
 
@@ -55,7 +59,7 @@ output_file_name = 'output-files/birth-30-out.csv'
 
 # Set how many original and how many duplicate records are to be generated.
 num_org_rec = len(rec_dict)
-num_dup_rec = 5
+num_dup_rec = int(num_org_rec * 0.1)
 
 # Set the maximum number of duplicate records can be generated per original
 # record.
@@ -65,7 +69,7 @@ max_duplicate_per_record = 1
 # Set the probability distribution used to create the duplicate records for one
 # original record (possible values are: 'uniform', 'poisson', 'zipf').
 #
-num_duplicates_distribution = 'uniform'
+num_duplicates_distribution = 'poisson'
 
 # Set the maximum number of modification that can be applied to a single
 # attribute (field).
@@ -79,6 +83,16 @@ num_modification_per_record = 1
 # Check if the given the unicode encoding selected is valid.
 #
 basefunctions.check_unicode_encoding_exists(unicode_encoding_used)
+
+
+# -----------------------------------------------------------------------------
+# Define the attributes to be generated for this data set, and the data set
+# itself.
+#
+attr_name_list = ['crptr-record',
+                  'FirstName', 'LastName','Gender','DateofBirth',
+                  'FatherFirstName','FatherLastName', 'FatherOccupation',
+                  'MotherFirstName', 'MotherLastName', 'MotherOccupation']
 
 # -----------------------------------------------------------------------------
 # Define how the generated records are to be corrupted (using methods from
@@ -172,27 +186,22 @@ clear_rec = corruptrecord.CorruptClearRecord(
 
 swap_attr = corruptrecord.CorruptSwapAttributes(
     attr1='FirstName',
-    attr2= 'LastName'
+    attr2= 'LastName',
+    attr_name_list=attr_name_list
 )
 
 over_attr = corruptrecord.CorruptOverflowAttributes(
     attr1='FirstName',
     attr2= 'LastName',
     overflow_level = 0.5,
-    start_pos = 'beginning'
+    start_pos = 'beginning',
+    attr_name_list=attr_name_list
 )
 
 missing_rec = corruptrecord.CorruptMissingRecord()
 
 duplicate_rec = corruptrecord.CorruptDuplicateRecord()
-# -----------------------------------------------------------------------------
-# Define the attributes to be generated for this data set, and the data set
-# itself.
-#
-attr_name_list = ['crptr-record',
-                  'FirstName', 'LastName','Gender','DateofBirth',
-                  'FatherFirstName','FatherLastName', 'FatherOccupation',
-                  'MotherFirstName', 'MotherLastName', 'MotherOccupation']
+
 
 
 # Define the probability distribution of how likely an attribute will be
@@ -203,10 +212,10 @@ attr_name_list = ['crptr-record',
 # will be applied on this attribute.
 #
 
-attr_mod_prob_dictionary = {'crptr-record':1.0,
+attr_mod_prob_dictionary = {'crptr-record':0.0,
                             'FirstName': 0.0, 'LastName':0.0, 'Gender': 0.0,'DateofBirth': 0.0,
                             'FatherFirstName': 0.0,'FatherLastName': 0.0, 'FatherOccupation': 0.0,
-                            'MotherFirstName': 0.0, 'MotherLastName': 0.0, 'MotherOccupation':0.0}
+                            'MotherFirstName': 0.0, 'MotherLastName': 0.0, 'MotherOccupation':1.0}
 
 
 # Define the actual corruption (modification) methods that will be applied on
@@ -225,10 +234,11 @@ attr_mod_data_dictionary = {'LastName':[(0.2, edit_corruptor2),
                                          (0.0, keyboard_corruptor)],
                             'Gender':[(1.0, gender_categorical_domain)],
                             'DateofBirth':[(1.0, date)],
-                            'crptr-record':[(1.0,swap_attr),
+                            'MotherOccupation':[(1.0, edit_corruptor)],
+                            'crptr-record':[(0.0,swap_attr),
                                             (0.0,over_attr),
                                             (0.0,clear_rec),
-                                            (0.0,missing_rec),
+                                            (1.0,missing_rec),
                                             (0.0,duplicate_rec)]
 
                             }

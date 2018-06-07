@@ -1,7 +1,7 @@
 import csv
 rec = []
 
-dataset_file = csv.DictReader(open('output-files/birth-crpt-dev.csv'))
+dataset_file = csv.DictReader(open('temp.csv'))
 dataset = list(dataset_file)
 dataset_len = str(len(dataset))
 for i in dataset:
@@ -22,7 +22,7 @@ for r in dataset:
             dataset.remove(r)
 
 fieldnames = dataset[0].keys()
-csvfile = open('output-files/birth-crpt-dev-no-org.csv','wb')
+csvfile = open('output-files/temp1.csv','wb')
 csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
 csvwriter.writerow(dict((fn,fn) for fn in fieldnames))
 for r in dataset:

@@ -1477,6 +1477,10 @@ class CorruptDate(CorruptValue):
        string by randomly selecting an edit operation and position in the
        string where to apply this edit.
     """
+
+    if in_str == "missing":
+      return in_str  # i.e. previous corruption prevents this corruption
+
     if self.date_order == "dd-mm-yyyy":
       day, month, year = in_str.split(self.separator)
       day = day.zfill(2)
@@ -1631,6 +1635,12 @@ class CorruptDate(CorruptValue):
 
     elif crpt_method == "full_month" or "abbr_month":
       comp_mod = "month"
+
+      try:
+        basefunctions.check_is_integer('month', month)
+      except Exception:
+        return in_str  # i.e. previous corruption prevents this corruption
+
       month = int(month)
       if crpt_method == "full_month":
         full_month_dict = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, \
