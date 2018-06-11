@@ -1,5 +1,5 @@
-import corruptvalue # Main classes to corrupt attribute values of records
-import corruptrecord # Main classes to corrupt whole records
+import corruptvalue  # Main classes to corrupt attribute values of records
+import corruptrecord  # Main classes to corrupt whole records
 import basefunctions  # Helper functions
 import positionfunctions
 
@@ -7,9 +7,9 @@ import positionfunctions
 class Corruptors:
 
 
-    def __init__(self, labels, encoding = 'utf-8'):
-        self.columnLabels = labels
+    def __init__(self, lookupFilesDir, encoding = 'utf-8'):
         self.encoding = encoding
+        self.lookupFilesDir = lookupFilesDir
         self.setup()
 
     def setup(self):
@@ -26,7 +26,7 @@ class Corruptors:
         )
 
         self.surnameMisspell = corruptvalue.CorruptCategoricalValue(
-            lookup_file_name = 'lookup-files/surname-misspell.csv',
+            lookup_file_name = self.lookupFilesDir + '/surname-misspell.csv',
             has_header_line = False,
             unicode_encoding = self.encoding
         )
@@ -65,7 +65,7 @@ class Corruptors:
         )
 
         self.phoneticVariation = corruptvalue.CorruptValuePhonetic(
-            lookup_file_name = 'lookup-files/phonetic-variations.csv',
+            lookup_file_name = self.lookupFilesDir + '/phonetic-variations.csv',
             has_header_line = False,
             unicode_encoding = self.encoding
         )
@@ -95,6 +95,21 @@ class Corruptors:
             clear_val=' '
         )
 
+
+
+class BirthCorruptors(Corruptors):
+
+    def __init__(self, labels, lookupFilesDir, encoding = 'utf-8'):
+        self.columnLabels = labels
+        Corruptors.__init__(self, lookupFilesDir, encoding)
+
+    def setup(self):
+
+        Corruptors.setup(self)
+
+        # =====================================================================
+        # Record level
+        # =====================================================================
         self.dayMonthSwapMarriage = corruptrecord.CorruptSwapAttributes(
             attr1='day of parents\' marriage',
             attr2='month of parents\' marriage',
@@ -124,3 +139,63 @@ class Corruptors:
             attr2='mother\'s maiden surname',
             attr_name_list=self.columnLabels
         )
+
+class DeathCorruptors(Corruptors):
+
+    def __init__(self, labels, lookupFilesDir, encoding = 'utf-8'):
+        self.columnLabels = labels
+        Corruptors.__init__(self, lookupFilesDir, encoding)
+
+
+    def setup(self):
+
+        Corruptors.setup(self)
+
+        # =====================================================================
+        # Attribute level
+        # =====================================================================
+        self.deceasedFlip = corruptvalue.CorruptCategoricalDomain(
+            categories_list=["D", ""]
+        )
+
+        self.marritalStatus = corruptvalue.CorruptCategoricalDomain(
+            categories_list=["R", "M", "W", "D", "B", "S"]
+        )
+
+        # =====================================================================
+        # Record level
+        # =====================================================================
+        self.dayMonthSwapDeath = corruptrecord.CorruptSwapAttributes(
+            attr1='day',
+            attr2='month',
+            attr_name_list=self.columnLabels
+        )
+
+        self.dayMonthSwapRegistration = corruptrecord.CorruptSwapAttributes(
+            attr1='day of reg',
+            attr2='month of reg',
+            attr_name_list=self.columnLabels
+        )
+
+        self.deceasedNameSwap = corruptrecord.CorruptSwapAttributes(
+            attr1='forename(s) of deceased',
+            attr2='surname of deceased',
+            attr_name_list=self.columnLabels
+        )
+
+        self.fatherNameSwap = corruptrecord.CorruptSwapAttributes(
+            attr1='father\'s forename',
+            attr2='father\'s surname',
+            attr_name_list=self.columnLabels
+        )
+
+        self.motherNameSwap = corruptrecord.CorruptSwapAttributes(
+            attr1='mother\'s forename',
+            attr2='mother\'s maiden surname',
+            attr_name_list=self.columnLabels
+        )
+
+        self.deceasedCorruptionGrouping = [(0.5, self.deceasedFlip),
+                                           (0.2, self.keyboardShift),
+                                           (0.05, self.unknownCharacter),
+                                           (0.25, self.missingValue)]

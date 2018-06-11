@@ -16,16 +16,14 @@
 
 # Import the necessary other modules of the data generator
 #
-import csv
 import random
 
 import basefunctions  # Helper functions
-import positionfunctions
-import crptr
-import corruptvalue # Main classes to corrupt attribute values of records
 import corruptrecord # Main classes to corrupt whole records
-import Utils
-import time
+import corruptvalue # Main classes to corrupt attribute values of records
+import crptr
+import positionfunctions
+from EG_SKYE_Corruptor import Utils
 
 # read in source file
 
