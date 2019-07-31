@@ -13,6 +13,7 @@ import EGCorruptorDefinitions
 import Utils
 import crptr
 import sys
+import csv
 
 
 def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
@@ -21,18 +22,16 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     logOutput = open(logFile, 'w')
     sys.stdout = logOutput
 
-    tempFile = "temp.csv"
+    dataset = list(csv.DictReader(open(inputFile)))
 
     # handle commas
-    Utils.removeCommas(inputFile, tempFile)
+    dataset = Utils.removeCommas(dataset)
 
     # add crptr ids
-    Utils.addCryptIDs(tempFile, tempFile)
+    dataset = Utils.addCryptIDs(dataset)
 
-    # read in source file
-    records = Utils.readInFile(tempFile)
-
-    labels = Utils.extractLabels(records)
+    dataset = Utils.convertFromListOfDictsToDictOfLists(dataset)
+    labels = Utils.extractLabels(dataset)
 
     corruptor = EGCorruptorDefinitions.BirthCorruptors(labels, lookupFilesDir)
 
@@ -119,7 +118,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
     }
 
-    numberOfRecords = len(records)
+    numberOfRecords = len(dataset)
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
     print "Records to be corrupted: " + str(numberToModify)
 
@@ -134,20 +133,17 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
                                          attr_mod_data_dict=selectedCorruptors
                                          )
 
-    records = crptrInstance.corrupt_records(records)
+    records = crptrInstance.corrupt_records(dataset)
     # end of data corruption
 
-    # Output corrupted data to temp file before cleanup
-    Utils.outputDictToCSV(labels, records, tempFile)
-
     # remove original versions for corrupter records
-    Utils.removeOrigonalRecordsForWhichDuplicateExists(tempFile, tempFile)
+    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
 
     # remove crptr ids
-    Utils.removeCryptIDs(tempFile, outputFile)
+    Utils.removeCryptIDs(records, labels)
 
-    # clean up temp file
-    os.remove(tempFile)
+    # Output corrupted data
+    Utils.outputDictToCSV(labels, records, outputFile)
 
     sys.stdout = so
     logOutput.close()
@@ -159,17 +155,17 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     logOutput = open(logFile, 'w')
     sys.stdout = logOutput
 
-    tempFile = "temp.csv"
+    # records = Utils.readInFile(inputFile)
+
+    records = list(csv.DictReader(open(inputFile)))
 
     # handle commas
-    Utils.removeCommas(inputFile, tempFile)
+    records = Utils.removeCommas(records)
 
     # add crptr ids
-    Utils.addCryptIDs(tempFile, tempFile)
+    records = Utils.addCryptIDs(records)
 
-    # read in source file
-    records = Utils.readInFile(tempFile)
-
+    records = Utils.convertFromListOfDictsToDictOfLists(records)
     labels = Utils.extractLabels(records)
 
     corruptor = EGCorruptorDefinitions.DeathCorruptors(labels, lookupFilesDir)
@@ -209,7 +205,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
         'father\'s occupation': 0.0, 'mother\'s occupation': 0.0,
         'address 1': 0.0, 'address 2': 0.0,
 
-        'IOSidentifier': 0.0, 'corrected': 0.0, 'source': 0.0, 'input1': 0.0, 'identifier': 0.0,
+        'IOSidentifier': 0.0, 'corrected': 0.0, 'source': 0.0, 'identifier': 0.0,
         'IOS_Rdindentifier': 0.0, 'IOS_RSDindentifier': 0.0, 'register identifier': 0.0,
         'IOS_Regisdentifier': 0.0, 'entry number': 0.0, 'IOS_yearofregistration': 0.0, 'ssdec': 0.0,
         'sxdec': 0.0, 'ssfather': 0.0, 'sxfather': 0.0, 'ssmother': 0.0, 'sxmother': 0.0,
@@ -266,10 +262,9 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
         'mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
         'if mother deceased': corruptor.deceasedCorruptionGrouping,
 
-        'cause of death': [(0.2, corruptor.generalCharacter),
+        'cause of death': [(0.6, corruptor.generalCharacter),
                            (0.1, corruptor.keyboardShift),
-                           (0.1, corruptor.unknownCharacter),
-                           (0.25, corruptor.missingValue)],
+                           (0.3, corruptor.missingValue)],
 
         'day of reg': corruptor.splitDateCorruptionGrouping,
         'month of reg': corruptor.splitDateCorruptionGrouping,
@@ -295,17 +290,14 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     records = crptrInstance.corrupt_records(records)
     # end of data corruption
 
-    # Output corrupted data to temp file before cleanup
-    Utils.outputDictToCSV(labels, records, tempFile)
-
     # remove original versions for corrupter records
-    Utils.removeOrigonalRecordsForWhichDuplicateExists(tempFile, tempFile)
+    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
 
     # remove crptr ids
-    Utils.removeCryptIDs(tempFile, outputFile)
+    Utils.removeCryptIDs(records, labels)
 
-    # clean up temp file
-    os.remove(tempFile)
+    # Output corrupted data
+    Utils.outputDictToCSV(labels, records, outputFile)
 
     sys.stdout = so
     logOutput.close()

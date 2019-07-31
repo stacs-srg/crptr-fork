@@ -58,8 +58,8 @@ class Corruptors:
         )
 
         self.dateDDMMYYYY = corruptvalue.CorruptDate(
-            date_order = "dd-mm-yyyy",
-            separator = "/",
+            date_order = "yyyy-mm-dd",
+            separator = "-",
             components_to_modify = ['day', 'month', 'year'],
             date_corruption_methods = ['add', 'decline', 'swap_digit','swap_comp', 'random', 'first','full_month','abbr_month']
         )

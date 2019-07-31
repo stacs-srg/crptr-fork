@@ -4,6 +4,8 @@
 import math
 import random
 
+from time import sleep
+
 import basefunctions
 
 class CorruptDataSet:
@@ -374,188 +376,187 @@ class CorruptDataSet:
     num_dup_rec_created = 0  # Count how many duplicate records have been
                              # generated
 
+
     # Main loop over all original records for which to generate duplicates - -
     #
     for (org_rec_id_to_mod, num_dups) in dup_rec_num_dict.iteritems():
       assert (num_dups > 0) and (num_dups <= self.max_num_dup_per_rec)
+      self.process_records(num_dup_rec_created, num_dups, org_rec_id_to_mod, rec_dict)
 
-      print
-      print 'Generating %d modified (duplicate) records for record "%s"' % \
-            (num_dups, org_rec_id_to_mod)
-
-      rec_to_mod_list = rec_dict[org_rec_id_to_mod]
-
-      d = 0  # Loop counter for duplicates for this record
-
-      this_dup_rec_list = []  # A list of all duplicates for this record
-
-      # Loop to create duplicate records - - - - - - - - - - - - - - - - - - - -
-      while (d < num_dups):
-
-        # Create a duplicate of the original record
-        #
-        dup_rec_list = rec_to_mod_list[:] # Make copy of original record
-
-        org_rec_num = org_rec_id_to_mod.split('-')[1]
-        dup_rec_id = 'rec-%s-dup-%d' % (org_rec_num, d)
-        print '  Generate identifier for duplicate record based on "%s": %s' \
-              % (org_rec_id_to_mod, dup_rec_id)
-
-        # Count the number of modifications in this record (counted as the
-        # number of modified attributes)
-        #
-        num_mod_in_record = 0
-
-        # Set the attribute modification counters to zero for all attributes
-        # that can be modified
-        #
-        attr_mod_count_dict = {}
-        for attr_name in self.attr_mod_prob_dict.keys():
-          attr_mod_count_dict[attr_name] = 0
-
-        # Abort generating modifications after a larger number of tries to
-        # prevent an endless loop
-        max_num_tries = self.num_mod_per_rec*10
-        num_tries = 0
-
-        # Now apply desired number of modifications to this record
-        while ((num_mod_in_record < self.num_mod_per_rec) and
-               (num_tries < max_num_tries)):
-
-          # Randomly modify an attribute value
-          r = random.random()  # Random value between 0.0 and 1.0
-          i = 0
-          while (self.attr_mod_prob_list[i][0] < r):
-            i += 1
-          mod_attr_name = self.attr_mod_prob_list[i][1]
-
-          if (attr_mod_count_dict[mod_attr_name] < self.max_num_mod_per_attr):
-            mod_attr_name_index = self.attribute_name_list.index(mod_attr_name)
-            mod_attr_val = dup_rec_list[mod_attr_name_index]
-
-            # Select an attribute to modify according to probability
-            # distribution of corruption methods
-            #
-            attr_mod_data_list = self.attr_mod_data_dict[mod_attr_name]
-
-            r = random.random()  # Random value between 0.0 and 1.0
-            p_sum = attr_mod_data_list[0][0]
-            i = 0
-            while (r >= p_sum):
-              i += 1
-              p_sum += attr_mod_data_list[i][0]
-            corruptor_method = attr_mod_data_list[i][1]
-            #record level handling =============start================
-            if mod_attr_name == 'crptr-record':
-              mod_rec_list = dup_rec_list[:]
-              new_rec_val = corruptor_method.corrupt_value(mod_rec_list)
-              org_rec_val = rec_to_mod_list[:]
-              if (new_rec_val != org_rec_val):
-                print '  Selected attribute for modification:', mod_attr_name
-                print '    Selected corruptor:', corruptor_method.name
-
-                # The following weird string printing construct is to overcome
-                # problems with printing non-ASCII characters
-                #
-                print '      Original record value:', str(org_rec_val)[1:-1]
-                print '      Modified record value:', str(new_rec_val)[1:-1]
-
-                dup_rec_list = new_rec_val
-
-                # One more modification for this attribute
-                #
-                attr_mod_count_dict[mod_attr_name] += 1
-
-                # The number of modifications in a record corresponds to the
-                # number of modified attributes
-                #
-                num_mod_in_record = 0
-
-                for num_attr_mods in attr_mod_count_dict.values():
-                  if (num_attr_mods > 0):
-                    num_mod_in_record += 1  # One more modification
-                  assert num_mod_in_record <= self.num_mod_per_rec
-
-              num_tries += 1  # One more try to modify record
-
-            #record level handling =============end===============
-            else:
-
-              # Modify the value from the selected attribute
-              #
-              new_attr_val = corruptor_method.corrupt_value(mod_attr_val)
-
-              org_attr_val = rec_to_mod_list[mod_attr_name_index]
-
-              # If the modified value is different insert it back into modified
-              # record
-              #
-              if (new_attr_val != org_attr_val):
-                print '  Selected attribute for modification:', mod_attr_name
-                print '    Selected corruptor:', corruptor_method.name
-
-                # The following weird string printing construct is to overcome
-                # problems with printing non-ASCII characters
-                #
-                print '      Original attribute value:', str([org_attr_val])[1:-1]
-                print '      Modified attribute value:', str([new_attr_val])[1:-1]
-
-                dup_rec_list[mod_attr_name_index] = new_attr_val
-
-                # One more modification for this attribute
-                #
-                attr_mod_count_dict[mod_attr_name] += 1
-
-                # The number of modifications in a record corresponds to the
-                # number of modified attributes
-                #
-                num_mod_in_record = 0
-
-                for num_attr_mods in attr_mod_count_dict.values():
-                  if (num_attr_mods > 0):
-                    num_mod_in_record += 1  # One more modification
-                assert num_mod_in_record <= self.num_mod_per_rec
-
-              num_tries += 1  # One more try to modify record
-
-
-        # Check if this duplicate is different from all others for this original
-        # record
-        #
-        is_diff = True  # Flag to check if the latest duplicate is different
-
-        if (this_dup_rec_list == []):  # No duplicate so far
-          this_dup_rec_list.append(dup_rec_list)
-        else:
-          for check_dup_rec in this_dup_rec_list:
-            if (check_dup_rec == dup_rec_list):  # Same as a previous duplicate
-              is_diff = False
-              print 'Same duplicate:', check_dup_rec
-              print '               ', dup_rec_list
-
-        if (is_diff == True):  # Only keep duplicate records that are different
-
-          # Safe the record into the overall record dictionary
-          #
-          rec_dict[dup_rec_id] = dup_rec_list
-
-          d += 1
-          num_dup_rec_created += 1
-
-          print 'Original record:'
-          print ' ', rec_to_mod_list
-          print 'Record with %d modified attributes' % (num_mod_in_record),
-          attr_mod_str = '('
-          for a in self.attribute_name_list:
-            if (attr_mod_count_dict.get(a,0) > 0):
-              attr_mod_str += '%d in %s, ' % (attr_mod_count_dict[a],a)
-          attr_mod_str = attr_mod_str[:-1]+'):'
-          print attr_mod_str
-          print ' ', dup_rec_list
-          print '%d of %d duplicate records generated so far' % \
-                (num_dup_rec_created, self.number_of_mod_records)
-          print
 
     return rec_dict
+
+  def process_records(self, num_dup_rec_created, num_dups, org_rec_id_to_mod, rec_dict):
+    print
+    print 'Generating %d modified (duplicate) records for record "%s"' % \
+          (num_dups, org_rec_id_to_mod)
+    rec_to_mod_list = rec_dict[org_rec_id_to_mod]
+    d = 0  # Loop counter for duplicates for this record
+    this_dup_rec_list = []  # A list of all duplicates for this record
+    # Loop to create duplicate records - - - - - - - - - - - - - - - - - - - -
+    while (d < num_dups):
+
+      # Create a duplicate of the original record
+      #
+      dup_rec_list = rec_to_mod_list[:]  # Make copy of original record
+
+      org_rec_num = org_rec_id_to_mod.split('-')[1]
+      dup_rec_id = 'rec-%s-dup-%d' % (org_rec_num, d)
+      print '  Generate identifier for duplicate record based on "%s": %s' \
+            % (org_rec_id_to_mod, dup_rec_id)
+
+      # Count the number of modifications in this record (counted as the
+      # number of modified attributes)
+      #
+      num_mod_in_record = 0
+
+      # Set the attribute modification counters to zero for all attributes
+      # that can be modified
+      #
+      attr_mod_count_dict = {}
+      for attr_name in self.attr_mod_prob_dict.keys():
+        attr_mod_count_dict[attr_name] = 0
+
+      # Abort generating modifications after a larger number of tries to
+      # prevent an endless loop
+      max_num_tries = self.num_mod_per_rec * 10
+      num_tries = 0
+
+      # Now apply desired number of modifications to this record
+      while ((num_mod_in_record < self.num_mod_per_rec) and
+             (num_tries < max_num_tries)):
+
+        # Randomly modify an attribute value
+        r = random.random()  # Random value between 0.0 and 1.0
+        i = 0
+        while (self.attr_mod_prob_list[i][0] < r):
+          i += 1
+        mod_attr_name = self.attr_mod_prob_list[i][1]
+
+        if (attr_mod_count_dict[mod_attr_name] < self.max_num_mod_per_attr):
+          mod_attr_name_index = self.attribute_name_list.index(mod_attr_name)
+          mod_attr_val = dup_rec_list[mod_attr_name_index]
+
+          # Select an attribute to modify according to probability
+          # distribution of corruption methods
+          #
+          attr_mod_data_list = self.attr_mod_data_dict[mod_attr_name]
+
+          r = random.random()  # Random value between 0.0 and 1.0
+          p_sum = attr_mod_data_list[0][0]
+          i = 0
+          while (r >= p_sum):
+            i += 1
+            p_sum += attr_mod_data_list[i][0]
+          corruptor_method = attr_mod_data_list[i][1]
+          # record level handling =============start================
+          if mod_attr_name == 'crptr-record':
+            mod_rec_list = dup_rec_list[:]
+            new_rec_val = corruptor_method.corrupt_value(mod_rec_list)
+            org_rec_val = rec_to_mod_list[:]
+            if (new_rec_val != org_rec_val):
+              print '  Selected attribute for modification:', mod_attr_name
+              print '    Selected corruptor:', corruptor_method.name
+
+              # The following weird string printing construct is to overcome
+              # problems with printing non-ASCII characters
+              #
+              print '      Original record value:', str(org_rec_val)[1:-1]
+              print '      Modified record value:', str(new_rec_val)[1:-1]
+
+              dup_rec_list = new_rec_val
+
+              # One more modification for this attribute
+              #
+              attr_mod_count_dict[mod_attr_name] += 1
+
+              # The number of modifications in a record corresponds to the
+              # number of modified attributes
+              #
+              num_mod_in_record = 0
+
+              for num_attr_mods in attr_mod_count_dict.values():
+                if (num_attr_mods > 0):
+                  num_mod_in_record += 1  # One more modification
+                assert num_mod_in_record <= self.num_mod_per_rec
+
+            num_tries += 1  # One more try to modify record
+
+          # record level handling =============end===============
+          else:
+
+            # Modify the value from the selected attribute
+            #
+            new_attr_val = corruptor_method.corrupt_value(mod_attr_val)
+
+            org_attr_val = rec_to_mod_list[mod_attr_name_index]
+
+            # If the modified value is different insert it back into modified
+            # record
+            #
+            if (new_attr_val != org_attr_val):
+              print '  Selected attribute for modification:', mod_attr_name
+              print '    Selected corruptor:', corruptor_method.name
+
+              # The following weird string printing construct is to overcome
+              # problems with printing non-ASCII characters
+              #
+              print '      Original attribute value:', str([org_attr_val])[1:-1]
+              print '      Modified attribute value:', str([new_attr_val])[1:-1]
+
+              dup_rec_list[mod_attr_name_index] = new_attr_val
+
+              # One more modification for this attribute
+              #
+              attr_mod_count_dict[mod_attr_name] += 1
+
+              # The number of modifications in a record corresponds to the
+              # number of modified attributes
+              #
+              num_mod_in_record = 0
+
+              for num_attr_mods in attr_mod_count_dict.values():
+                if (num_attr_mods > 0):
+                  num_mod_in_record += 1  # One more modification
+              assert num_mod_in_record <= self.num_mod_per_rec
+
+            num_tries += 1  # One more try to modify record
+
+      # Check if this duplicate is different from all others for this original
+      # record
+      #
+      is_diff = True  # Flag to check if the latest duplicate is different
+
+      if (this_dup_rec_list == []):  # No duplicate so far
+        this_dup_rec_list.append(dup_rec_list)
+      else:
+        for check_dup_rec in this_dup_rec_list:
+          if (check_dup_rec == dup_rec_list):  # Same as a previous duplicate
+            is_diff = False
+            print 'Same duplicate:', check_dup_rec
+            print '               ', dup_rec_list
+
+      if (is_diff == True):  # Only keep duplicate records that are different
+
+        # Safe the record into the overall record dictionary
+        #
+        rec_dict[dup_rec_id] = dup_rec_list
+
+        d += 1
+        num_dup_rec_created += 1
+
+        print 'Original record:'
+        print ' ', rec_to_mod_list
+        print 'Record with %d modified attributes' % (num_mod_in_record),
+        attr_mod_str = '('
+        for a in self.attribute_name_list:
+          if (attr_mod_count_dict.get(a, 0) > 0):
+            attr_mod_str += '%d in %s, ' % (attr_mod_count_dict[a], a)
+        attr_mod_str = attr_mod_str[:-1] + '):'
+        print attr_mod_str
+        print ' ', dup_rec_list
+        print '%d of %d duplicate records generated so far' % \
+              (num_dup_rec_created, self.number_of_mod_records)
+        print
 
 # =============================================================================

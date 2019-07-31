@@ -40,9 +40,16 @@ def position_mod_normal(in_str):
 
   str_len = len(in_str)
 
-  mid_pos = str_len / 2.0 + 1
-  std_dev = str_len / 4.0
+  if (str_len == 1):  # Empty input string
+    return 0
+
+
+  mid_pos = (str_len - 1) / 2.0 + 1
+  std_dev = str_len / 6.0
   max_pos = str_len - 1
+
+  if mid_pos > max_pos:
+    mid_pos = max_pos
 
   pos = int(round(random.gauss(mid_pos, std_dev)))
   while ((pos < 0) or (pos > max_pos)):
