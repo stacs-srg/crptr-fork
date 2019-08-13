@@ -482,7 +482,7 @@ def read_csv_file(file_name, encoding, header_line):
   check_is_flag('header_line', header_line)
 
   if (encoding == None):  # Use default ASCII encoding
-    encoding = 'ascii'
+    encoding = 'utf-8'
   check_is_string('encoding', encoding)
   check_unicode_encoding_exists(encoding)
 
@@ -543,12 +543,12 @@ def write_csv_file(file_name, encoding, header_list, file_data):
   check_is_list('file_data', file_data)
 
   if (encoding == None):  # Use default ASCII encoding
-    encoding = 'ascii'
+    encoding = 'uft-8'
   check_is_string('encoding', encoding)
   check_unicode_encoding_exists(encoding)
 
   try:
-    out_file = codecs.open(file_name, 'w', encoding=encoding)
+    out_file = codecs.open(file_name, 'w', encoding=encoding, errors='replace')
   except:
     raise IOError, 'Cannot write CSV file "%s"' % (file_name)
 

@@ -4,15 +4,20 @@ import time
 print "Init: " + str(time.time())
 
 # Files
-birthInputFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/input-files/birth_records.csv"
-birthOutputFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/output-files/birth_records.csv"
-birthLogFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/output-files/birth_crptr_log.csv"
+birthInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/clean/birth_records.csv"
+birthOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/birth_records.csv"
+birthLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/logs/birth_crptr_log.csv"
 
-deathInputFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/input-files/death_records.csv"
-deathOutputFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/output-files/death_records.csv"
-deathLogFile = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/output-files/death_crptr_log.csv"
+deathInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/clean/death_records.csv"
+deathOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/death_records.csv"
+deathLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/logs/death_crptr_log.csv"
+
+marriageInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/clean/marriage_records.csv"
+marriageOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/marriage_records.csv"
+marriageLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations/src/main/resources/uk/ac/standrews/cs/data/synthetic/scot_test/_570k/_1/corrupt/_1/logs/marriage_crptr_log.csv"
 
 lookupFilesDir = "/Users/tsd4/OneDrive/cs/PhD/repos/crptr-fork/lookup-files"
+
 
 # Determinism
 deterministic = True
@@ -25,17 +30,21 @@ numberOfModificationsPerRecord = 4
 recordLevelProportion = 0.25
 
 st = time.time()
-print "Birth: " + str(time.time())
+print "Start time: " + str(time.time())
 EGSkyeCorrupter.birthCorruptor(birthInputFile, birthOutputFile, birthLogFile, lookupFilesDir, deterministic, seed,
                                proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
                                numberOfModificationsPerRecord, recordLevelProportion)
-print "Birth conclude: " + str(time.time())
 print "Birth Duration: " + str(time.time()-st)
 
 st = time.time()
-print "Death: " + str(time.time())
 EGSkyeCorrupter.deathCorruptor(deathInputFile, deathOutputFile, deathLogFile, lookupFilesDir, deterministic, seed,
                                proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
                                numberOfModificationsPerRecord, recordLevelProportion)
-print "Death conclude: " + str(time.time())
 print "Death Duration: " + str(time.time()-st)
+
+st = time.time()
+EGSkyeCorrupter.marriageCorruptor(marriageInputFile, marriageOutputFile, marriageLogFile, lookupFilesDir, deterministic, seed,
+                               proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
+                               numberOfModificationsPerRecord, recordLevelProportion)
+print "Marriage Duration: " + str(time.time()-st)
+print "End time: " + str(time.time())

@@ -44,7 +44,7 @@ random.seed(42)
 
 # Valid encoding strings are listed here:
 # http://docs.python.org/library/codecs.html#standard-encodings
-unicode_encoding_used = 'utf_8'
+unicode_encoding_used = 'utf-8'
 
 # The name of the record identifier attribute (unique value for each record).
 rec_id_attr_name = 'rec-id' # TD: change this to whatever our ID field is called

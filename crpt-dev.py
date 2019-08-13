@@ -46,7 +46,7 @@ random.seed(42)  # Set seed for random generator, so data generation can be
 # Valid encoding strings are listed here:
 # http://docs.python.org/library/codecs.html#standard-encodings
 #
-unicode_encoding_used = 'ascii'
+unicode_encoding_used = 'utf-8'
 
 # The name of the record identifier attribute (unique value for each record).
 # This name cannot be given as name to any other attribute that is generated.

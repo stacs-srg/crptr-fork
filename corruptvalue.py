@@ -811,6 +811,9 @@ class CorruptValuePhonetic(CorruptValue):
        Developed by Agus Pudjijono, ANU, 2008.
     """
 
+    if not is_ascii(s):
+      return s
+
     vowels = 'aeiouy'
     tmpstr = s
     changesstr = ''
@@ -1664,3 +1667,5 @@ class CorruptDate(CorruptValue):
 
     return new_date
 
+def is_ascii(s):
+  return all(ord(c) < 128 for c in s)

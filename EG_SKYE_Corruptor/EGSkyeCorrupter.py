@@ -25,7 +25,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     dataset = list(csv.DictReader(open(inputFile)))
 
     # handle commas
-    dataset = Utils.removeCommas(dataset)
+    # dataset = Utils.removeCommas(dataset)
 
     # add crptr ids
     dataset = Utils.addCryptIDs(dataset)
@@ -38,62 +38,57 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     Utils.setDeterminism(deterministic, seed)
 
     # data corruption
-    numberOfCorruptibleAttributes = 11
+    numberOfCorruptibleAttributes = 14
 
     attributeLevelProportion = 1 - recordLevelProportion
     split = attributeLevelProportion / float(numberOfCorruptibleAttributes)
 
     columnProbabilities = {
+
         # GROUND TRUTH - DO NOT CORRUPT - ALL VALUES 0
-        'ID': 0.0, 'family': 0.0, 'marriage': 0.0, 'Death': 0.0,
+        'ID': 0.0, 'family': 0.0, 'Death': 0.0, 'CHILD_IDENTITY': 0.0,
+        'MOTHER_IDENTITY': 0.0, 'FATHER_IDENTITY': 0.0,
+        'DEATH_RECORD_IDENTITY': 0.0, 'PARENT_MARRIAGE_RECORD_IDENTITY': 0.0,
+        'FATHER_BIRTH_RECORD_IDENTITY': 0.0, 'MOTHER_BIRTH_RECORD_IDENTITY': 0.0,
+        'MARRIAGE_RECORD_IDENTITY1': 0.0, 'MARRIAGE_RECORD_IDENTITY2': 0.0,
+        'MARRIAGE_RECORD_IDENTITY3': 0.0, 'MARRIAGE_RECORD_IDENTITY4': 0.0,
+        'MARRIAGE_RECORD_IDENTITY5': 0.0,
+
         'crptr-record': recordLevelProportion,
+
         # CHILD
-        'child\'s forname(s)': split, 'child\'s surname': split, 'birth date': split, 'sex': split,
+        'child\'s forname(s)': split, 'child\'s surname': split,
+        'birth day': split / 3.0, 'birth month': split / 3.0, 'birth year': split / 3.0,
+        'address': split, 'sex': split,
+
         # FATHER
         'father\'s forename': split, 'father\'s surname': split,
+        'father\'s occupation': split,
+
         # MOTHER
         'mother\'s forename': split, 'mother\'s maiden surname': split,
+        'mother\'s occupation': split,
+
         # MARRIAGE
-        'day of parents\' marriage': split / 3.0, 'month of parents\' marriage': split / 3.0,
+        'day of parents\' marriage': split / 3.0,
+        'month of parents\' marriage': split / 3.0,
         'year of parents\' marriage': split / 3.0,
-        # REGISTRATION
-        'day of reg': split / 3.0, 'month of reg': split / 3.0, 'year of reg': split / 3.0,
-        'illegit': split,
 
-        # OTHER POPULATED FIELDS
-        'notes1': 0.0, 'marriageBaby': 0.0,
-
-        # UNPOPULATED FIELDS
-        'mother\'s occupation': 0.0,
-        'father\'s occupation': 0.0,
-        'address 1': 0.0, 'address 2': 0.0,
-        'IOSBIRTH_Identifier': 0.0, 'corrected': 0.0, 'source': 0.0, 'line no': 0.0,
-        'RD Identifier': 0.0, 'IOS_RDIdentifier': 0.0, 'IOS_RSDIdentifier': 0.0,
-        'register identifier': 0.0, 'IOS_RegisterNumber': 0.0, 'IOS_Entry no': 0.0,
-        'IOS_RegisterYear': 0.0, 'sschild': 0.0, 'sxchild': 0.0, 'ssfather': 0.0, 'sxfather': 0.0,
-        'ssmother': 0.0, 'sxmother': 0.0, 'place of parent\'s marriage 1': 0.0,
-        'place of parent\'s marriage 2': 0.0, 'forename of informant': 0.0,
-        'surname of informant': 0.0, 'relationship of informant to child': 0.0,
-        'did inform sign?': 0.0, 'was inform present?': 0.0, 'notes2': 0.0, 'notes3': 0.0,
-        'repeats': 0.0, 'edits': 0.0, 'latepid': 0.0, 'latesch': 0.0
+        'place of parent\'s marriage': split, 'illegit': split
 
     }
 
     selectedCorruptors = {
 
         'crptr-record': [(0.0, corruptor.blankRecord),
-                         (0.2, corruptor.dayMonthSwapMarriage),
-                         (0.2, corruptor.dayMonthSwapRegistration),
-                         (0.2, corruptor.childNameSwap),
+                         (0.3, corruptor.dayMonthSwapMarriage),
+                         (0.3, corruptor.childNameSwap),
                          (0.2, corruptor.fatherNameSwap),
                          (0.2, corruptor.motherNameSwap)],
 
         'child\'s forname(s)': corruptor.forenameCorruptionGrouping,
 
         'child\'s surname': corruptor.surnameCorruptionGrouping,
-
-        'birth date': [(0.95, corruptor.dateDDMMYYYY),
-                       (0.05, corruptor.missingValue)],
 
         'sex': [(0.8, corruptor.sexFlip),
                 (0.05, corruptor.missingValue),
@@ -102,19 +97,24 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
         'father\'s forename': corruptor.forenameCorruptionGrouping,
         'father\'s surname': corruptor.surnameCorruptionGrouping,
+        'father\'s occupation': corruptor.occupationCorruptionGrouping,
 
         'mother\'s forename': corruptor.forenameCorruptionGrouping,
         'mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
+        'mother\'s occupation': corruptor.occupationCorruptionGrouping,
 
         'day of parents\' marriage': corruptor.splitDateCorruptionGrouping,
         'month of parents\' marriage': corruptor.splitDateCorruptionGrouping,
         'year of parents\' marriage': corruptor.splitDateCorruptionGrouping,
 
-        'day of reg': corruptor.splitDateCorruptionGrouping,
-        'month of reg': corruptor.splitDateCorruptionGrouping,
-        'year of reg': corruptor.splitDateCorruptionGrouping,
+        'birth day': corruptor.splitDateCorruptionGrouping,
+        'birth month': corruptor.splitDateCorruptionGrouping,
+        'birth year': corruptor.splitDateCorruptionGrouping,
 
-        'illegit': [(1.0, corruptor.missingValue)]
+        'illegit': [(1.0, corruptor.missingValue)],
+
+        'address': corruptor.addressCorruptionGrouping,
+        'place of parent\'s marriage': corruptor.addressCorruptionGrouping
 
     }
 
@@ -149,6 +149,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     logOutput.close()
 
 
+
 def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
     so = sys.stdout
@@ -160,7 +161,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     records = list(csv.DictReader(open(inputFile)))
 
     # handle commas
-    records = Utils.removeCommas(records)
+    # records = Utils.removeCommas(records)
 
     # add crptr ids
     records = Utils.addCryptIDs(records)
@@ -173,7 +174,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     Utils.setDeterminism(deterministic, seed)
 
     # data corruption
-    numberOfCorruptibleAttributes = 15
+    numberOfCorruptibleAttributes = 19
 
     attributeLevelProportion = 1 - recordLevelProportion
     split = attributeLevelProportion / float(numberOfCorruptibleAttributes)
@@ -181,48 +182,41 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     columnProbabilities = {
         # GROUND TRUTH - DO NOT CORRUPT - ALL VALUES 0
         'ID': 0.0, 'Birth': 0.0, 'mar': 0.0,
+        'DECEASED_IDENTITY': 0.0,
+        'MOTHER_IDENTITY': 0.0, 'FATHER_IDENTITY': 0.0,
+        'SPOUSE_IDENTITY': 0.0, 'BIRTH_RECORD_IDENTITY': 0.0,
+        'PARENT_MARRIAGE_RECORD_IDENTITY': 0.0,
+        'FATHER_BIRTH_RECORD_IDENTITY': 0.0, 'MOTHER_BIRTH_RECORD_IDENTITY': 0.0,
+        'SPOUSE_MARRIAGE_RECORD_IDENTITY': 0.0, 'SPOUSE_BIRTH_RECORD_IDENTITY': 0.0,
 
         'crptr-record': recordLevelProportion,
 
-        # DECEASED
         'forename(s) of deceased': split, 'surname of deceased': split,
-        'marital status': split, 'sex': split, 'name of spouse(s)': split,
-        'day': split / 3.0, 'month': split / 3.0, 'year': split / 3.0, 'age at death': split,
-        'cause of death': split,
+        'occupation': split, 'marital status': split, 'sex': split,
 
-        # PARENTS
-        'father\'s forename': split, 'father\'s surname': split, 'if father deceased': split,
-        'mother\'s forename': split, 'mother\'s maiden surname': split, 'if mother deceased': split,
+        'name of spouse': split, 'spouse\'s occ': split,
 
-        # REGISTRATION
-        'day of reg': split / 3.0, 'month of reg': split / 3.0, 'year of reg': split / 3.0,
+        'day': split / 3.0, 'month': split / 3.0, 'year': split / 3.0,
 
-        # OTHER POPULATED FIELDS
-        'death date': 0.0, 'agey': 0.0, 'notes1': 0.0,
+        'address': split,
 
-        # UNPOPULATED FIELDS
-        'spouse\'s occ': 0.0, 'occupation': 0.0,
-        'father\'s occupation': 0.0, 'mother\'s occupation': 0.0,
-        'address 1': 0.0, 'address 2': 0.0,
+        'age at death': split,
 
-        'IOSidentifier': 0.0, 'corrected': 0.0, 'source': 0.0, 'identifier': 0.0,
-        'IOS_Rdindentifier': 0.0, 'IOS_RSDindentifier': 0.0, 'register identifier': 0.0,
-        'IOS_Regisdentifier': 0.0, 'entry number': 0.0, 'IOS_yearofregistration': 0.0, 'ssdec': 0.0,
-        'sxdec': 0.0, 'ssfather': 0.0, 'sxfather': 0.0, 'ssmother': 0.0, 'sxmother': 0.0,
-        'spousesn': 0.0, 'spousexn': 0.0, 'infxn': 0.0, 'infsn': 0.0, 'length of last illness': 0.0,
-        'medically certified': 0.0, 'doctor\'s name': 0.0, 'forename of informant': 0.0,
-        'surname of informant': 0.0, 'relationship of informant to deceased': 0.0,
-        'did inform sign?': 0.0, 'was inform pres?': 0.0, 'notes2': 0.0, 'notes3': 0.0,
-        'repeats': 0.0, 'edits': 0.0, 'earlypid': 0.0, 'earlysch': 0.0
+        'father\'s forename': split, 'father\'s surname': split,
+        'father\'s occupation': split, 'if father deceased': split,
+
+        'mother\'s forename': split, 'mother\'s maiden surname': split,
+        'mother\'s occupation': split, 'if mother deceased': split,
+
+        'death code A': split / 3.0, 'death code B': split / 3.0, 'death code C': split / 3.0
 
     }
 
     selectedCorruptors = {
 
         'crptr-record': [(0.0, corruptor.blankRecord),
-                         (0.2, corruptor.dayMonthSwapDeath),
-                         (0.2, corruptor.dayMonthSwapRegistration),
-                         (0.2, corruptor.deceasedNameSwap),
+                         (0.3, corruptor.dayMonthSwapDeath),
+                         (0.3, corruptor.deceasedNameSwap),
                          (0.2, corruptor.fatherNameSwap),
                          (0.2, corruptor.motherNameSwap)],
 
@@ -235,16 +229,20 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
                            (0.1, corruptor.unknownCharacter),
                            (0.05, corruptor.keyboardShift)],
 
+        'occupation': corruptor.occupationCorruptionGrouping,
+
         'sex': [(0.8, corruptor.sexFlip),
                 (0.05, corruptor.missingValue),
                 (0.1, corruptor.unknownCharacter),
                 (0.05, corruptor.keyboardShift)],
 
-        'name of spouse(s)': [(0.2, corruptor.generalCharacter),
+        'name of spouse': [(0.2, corruptor.generalCharacter),
                               (0.1, corruptor.keyboardShift),
                               (0.1, corruptor.unknownCharacter),
                               (0.25, corruptor.missingValue),
                               (0.35, corruptor.phoneticVariation)],
+
+        'spouse\'s occ': corruptor.occupationCorruptionGrouping,
 
         'day': corruptor.splitDateCorruptionGrouping,
         'month': corruptor.splitDateCorruptionGrouping,
@@ -257,18 +255,188 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
         'father\'s forename': corruptor.forenameCorruptionGrouping,
         'father\'s surname': corruptor.surnameCorruptionGrouping,
         'if father deceased': corruptor.deceasedCorruptionGrouping,
+        'father\'s occupation': corruptor.occupationCorruptionGrouping,
 
         'mother\'s forename': corruptor.forenameCorruptionGrouping,
         'mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
         'if mother deceased': corruptor.deceasedCorruptionGrouping,
+        'mother\'s occupation': corruptor.occupationCorruptionGrouping,
 
-        'cause of death': [(0.6, corruptor.generalCharacter),
+        'death code A': [(0.6, corruptor.generalCharacter),
                            (0.1, corruptor.keyboardShift),
                            (0.3, corruptor.missingValue)],
 
-        'day of reg': corruptor.splitDateCorruptionGrouping,
-        'month of reg': corruptor.splitDateCorruptionGrouping,
-        'year of reg': corruptor.splitDateCorruptionGrouping
+        'death code B': [(0.6, corruptor.generalCharacter),
+                         (0.1, corruptor.keyboardShift),
+                         (0.3, corruptor.missingValue)],
+
+        'death code C': [(0.6, corruptor.generalCharacter),
+                         (0.1, corruptor.keyboardShift),
+                         (0.3, corruptor.missingValue)],
+
+        'address': corruptor.addressCorruptionGrouping
+
+    }
+
+    numberOfRecords = len(records)
+    numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
+    print "Records to be corrupted: " + str(numberToModify)
+
+    crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
+                                         number_of_mod_records=numberToModify,
+                                         attribute_name_list=labels[1:],
+                                         max_num_dup_per_rec=1,
+                                         num_dup_dist='uniform',
+                                         max_num_mod_per_attr=maxModificationsPerAttribute,
+                                         num_mod_per_rec=numberOfModificationsPerRecord,
+                                         attr_mod_prob_dict=columnProbabilities,
+                                         attr_mod_data_dict=selectedCorruptors
+                                         )
+
+    records = crptrInstance.corrupt_records(records)
+    # end of data corruption
+
+    # remove original versions for corrupter records
+    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
+
+    # remove crptr ids
+    Utils.removeCryptIDs(records, labels)
+
+    # Output corrupted data
+    Utils.outputDictToCSV(labels, records, outputFile)
+
+    sys.stdout = so
+    logOutput.close()
+
+
+def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+                   maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
+    so = sys.stdout
+    logOutput = open(logFile, 'w')
+    sys.stdout = logOutput
+
+    # records = Utils.readInFile(inputFile)
+
+    records = list(csv.DictReader(open(inputFile)))
+
+    # handle commas
+    # records = Utils.removeCommas(records)
+
+    # add crptr ids
+    records = Utils.addCryptIDs(records)
+
+    records = Utils.convertFromListOfDictsToDictOfLists(records)
+    labels = Utils.extractLabels(records)
+
+    corruptor = EGCorruptorDefinitions.MarriageCorruptors(labels, lookupFilesDir)
+
+    Utils.setDeterminism(deterministic, seed)
+
+    # data corruption
+    numberOfCorruptibleAttributes = 28
+
+    attributeLevelProportion = 1 - recordLevelProportion
+    split = attributeLevelProportion / float(numberOfCorruptibleAttributes)
+
+    columnProbabilities = {
+        # GROUND TRUTH - DO NOT CORRUPT - ALL VALUES 0
+        'ID': 0.0,
+        'gdeath': 0.0, 'bdeath': 0.0,
+        'GROOM_IDENTITY': 0.0, 'BRIDE_IDENTITY': 0.0,
+        'GROOM_MOTHER_IDENTITY': 0.0, 'GROOM_FATHER_IDENTITY': 0.0,
+        'BRIDE_MOTHER_IDENTITY': 0.0, 'BRIDE_FATHER_IDENTITY': 0.0,
+        'GROOM_BIRTH_RECORD_IDENTITY': 0.0, 'BRIDE_BIRTH_RECORD_IDENTITY': 0.0,
+        'GROOM_FATHER_BIRTH_RECORD_IDENTITY': 0.0, 'GROOM_MOTHER_BIRTH_RECORD_IDENTITY': 0.0,
+        'BRIDE_FATHER_BIRTH_RECORD_IDENTITY': 0.0, 'BRIDE_MOTHER_BIRTH_RECORD_IDENTITY': 0.0,
+
+        'crptr-record': recordLevelProportion,
+
+        'day': split / 3.0, 'month': split / 3.0, 'year': split / 3.0,
+        'place of marriage': split,
+
+        'forename of groom': split, 'surname of groom': split,
+        'occupation of groom': split, 'marital status of groom': split,
+        'age of groom': split, 'address of groom': split,
+
+        'forename of bride': split, 'surname of bride': split,
+        'occupation of bride': split, 'marital status of bride': split,
+        'age of bride': split, 'address of bride': split,
+
+        'groom\'s father\'s forename': split, 'groom\'s father\'s surname': split,
+        'groom\'s father\'s occupation': split, 'if groom\'s father deceased': split,
+
+        'groom\'s mother\'s forename': split, 'groom\'s mother\'s maiden surname': split,
+        'if groom\'s mother deceased': split,
+
+        'bride\'s father\'s forename': split, 'bride\'s father\'s surname': split,
+        'bride\'s father\'s occupation': split, 'if bride\'s father deceased': split,
+
+        'bride\'s mother\'s forename': split, 'bride\'s mother\'s maiden surname': split,
+        'if bride\'s mother deceased': split
+    }
+
+    selectedCorruptors = {
+
+        'crptr-record': [(0.0, corruptor.blankRecord),
+                         (0.1, corruptor.dayMonthSwapDeath),
+                         (0.15, corruptor.groomNameSwap),
+                         (0.15, corruptor.brideNameSwap),
+                         (0.15, corruptor.brideMotherNameSwap),
+                         (0.15, corruptor.brideFatherNameSwap),
+                         (0.15, corruptor.groomMotherNameSwap),
+                         (0.15, corruptor.groomFatherNameSwap)],
+
+        'forename of groom': corruptor.forenameCorruptionGrouping,
+        'surname of groom': corruptor.surnameCorruptionGrouping,
+        'occupation of groom': corruptor.forenameCorruptionGrouping,
+        'marital status of groom': [(0.5, corruptor.marritalStatus),
+                           (0.35, corruptor.missingValue),
+                           (0.1, corruptor.unknownCharacter),
+                           (0.05, corruptor.keyboardShift)],
+
+        'age of groom': [(0.3, corruptor.keyboardShift),
+                         (0.3, corruptor.unknownCharacter),
+                         (0.4, corruptor.missingValue)],
+
+        'address of groom': corruptor.addressCorruptionGrouping,
+
+        'forename of bride': corruptor.forenameCorruptionGrouping,
+        'surname of bride': corruptor.surnameCorruptionGrouping,
+        'occupation of bride': corruptor.forenameCorruptionGrouping,
+        'marital status of bride': [(0.5, corruptor.marritalStatus),
+                                    (0.35, corruptor.missingValue),
+                                    (0.1, corruptor.unknownCharacter),
+                                    (0.05, corruptor.keyboardShift)],
+
+        'age of bride': [(0.3, corruptor.keyboardShift),
+                         (0.3, corruptor.unknownCharacter),
+                         (0.4, corruptor.missingValue)],
+
+        'address of bride': corruptor.addressCorruptionGrouping,
+
+        'day': corruptor.splitDateCorruptionGrouping,
+        'month': corruptor.splitDateCorruptionGrouping,
+        'year': corruptor.splitDateCorruptionGrouping,
+
+        'place of marriage': corruptor.addressCorruptionGrouping,
+
+        'groom\'s father\'s forename': corruptor.forenameCorruptionGrouping,
+        'groom\'s father\'s surname': corruptor.surnameCorruptionGrouping,
+        'groom\'s father\'s occupation': corruptor.occupationCorruptionGrouping,
+        'if groom\'s father deceased': corruptor.deceasedCorruptionGrouping,
+
+        'bride\'s father\'s forename': corruptor.forenameCorruptionGrouping,
+        'bride\'s father\'s surname': corruptor.surnameCorruptionGrouping,
+        'bride\'s father\'s occupation': corruptor.occupationCorruptionGrouping,
+        'if bride\'s father deceased': corruptor.deceasedCorruptionGrouping,
+
+        'groom\'s mother\'s forename': corruptor.forenameCorruptionGrouping,
+        'groom\'s mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
+        'if groom\'s mother deceased': corruptor.deceasedCorruptionGrouping,
+
+        'bride\'s mother\'s forename': corruptor.forenameCorruptionGrouping,
+        'bride\'s mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
+        'if bride\'s mother deceased': corruptor.deceasedCorruptionGrouping
 
     }
 

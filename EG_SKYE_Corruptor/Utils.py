@@ -186,18 +186,21 @@ def removeOrigonalRecordsForWhichDuplicateExistsInFiles(inputFile, outputFile):
     print "Removed origonals of corrupted records"
 
 
-def outputDictToCSV(labels, dict, outputFile, encoding = 'utf_8'):
+def outputDictToCSV(labels, dict, outputFile, encoding = 'utf-8'):
 
     rec_id_list = dict.keys()
     rec_id_list.sort()
-    rec_list = []
 
-    for rec_id in rec_id_list:
-        this_rec_list = [rec_id] + dict[rec_id]
-        rec_list.append(this_rec_list)
-        # print this_rec_list
+    with open(outputFile, 'wb') as csvfile:
+        outputWriter = csv.writer(csvfile, delimiter=',',
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-    basefunctions.write_csv_file(outputFile, encoding, labels, rec_list)
+        outputWriter.writerow(labels)
+
+        for rec_id in rec_id_list:
+            outputWriter.writerow([rec_id] + dict[rec_id])
+
+
 
 def setDeterminism(deterministic, seed = None):
     if deterministic:
