@@ -543,7 +543,7 @@ def write_csv_file(file_name, encoding, header_list, file_data):
   check_is_list('file_data', file_data)
 
   if (encoding == None):  # Use default ASCII encoding
-    encoding = 'uft-8'
+    encoding = 'UTF-8'
   check_is_string('encoding', encoding)
   check_unicode_encoding_exists(encoding)
 

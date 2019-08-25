@@ -7,7 +7,7 @@ import positionfunctions
 class Corruptors:
 
 
-    def __init__(self, lookupFilesDir, encoding = 'utf-8'):
+    def __init__(self, lookupFilesDir, encoding = 'UTF-8'):
         self.encoding = encoding
         self.lookupFilesDir = lookupFilesDir
         self.setup()
@@ -124,7 +124,7 @@ class Corruptors:
 
 class BirthCorruptors(Corruptors):
 
-    def __init__(self, labels, lookupFilesDir, encoding = 'utf-8'):
+    def __init__(self, labels, lookupFilesDir, encoding = 'UTF-8'):
         self.columnLabels = labels
         Corruptors.__init__(self, lookupFilesDir, encoding)
 
@@ -161,7 +161,7 @@ class BirthCorruptors(Corruptors):
 
 class DeathCorruptors(Corruptors):
 
-    def __init__(self, labels, lookupFilesDir, encoding = 'utf-8'):
+    def __init__(self, labels, lookupFilesDir, encoding = 'UTF-8'):
         self.columnLabels = labels
         Corruptors.__init__(self, lookupFilesDir, encoding)
 
@@ -205,7 +205,7 @@ class DeathCorruptors(Corruptors):
 
 class MarriageCorruptors(Corruptors):
 
-    def __init__(self, labels, lookupFilesDir, encoding = 'utf-8'):
+    def __init__(self, labels, lookupFilesDir, encoding = 'UTF-8'):
         self.columnLabels = labels
         Corruptors.__init__(self, lookupFilesDir, encoding)
 

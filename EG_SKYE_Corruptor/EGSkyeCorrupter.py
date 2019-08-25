@@ -15,13 +15,17 @@ import crptr
 import sys
 import csv
 
+def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
+    csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
+    for row in csv_reader:
+        yield [unicode(cell, 'utf-8') for cell in row]
 
 def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
     so = sys.stdout
     logOutput = open(logFile, 'w')
     sys.stdout = logOutput
-
+    # csv.DictReader
     dataset = list(csv.DictReader(open(inputFile)))
 
     # handle commas
@@ -124,7 +128,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
-                                         attribute_name_list=labels[1:],
+                                         attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
                                          num_dup_dist='uniform',
                                          max_num_mod_per_attr=maxModificationsPerAttribute,
@@ -284,7 +288,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
-                                         attribute_name_list=labels[1:],
+                                         attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
                                          num_dup_dist='uniform',
                                          max_num_mod_per_attr=maxModificationsPerAttribute,
@@ -446,7 +450,7 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
-                                         attribute_name_list=labels[1:],
+                                         attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
                                          num_dup_dist='uniform',
                                          max_num_mod_per_attr=maxModificationsPerAttribute,

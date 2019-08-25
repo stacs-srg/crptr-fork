@@ -236,6 +236,8 @@ class CorruptValueEdit(CorruptValue):
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
 
+    # in_str = in_str.decode("UTF-8")
+
     # Randomly select an edit operation
     #
     r = random.random()
@@ -399,6 +401,8 @@ class CorruptValueKeyboard(CorruptValue):
        character with a neighbouring character given the defined keyboard
        layout at a position randomly selected by the position function.
     """
+
+    #in_str = in_str.decode("UTF-8")
 
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
@@ -572,6 +576,8 @@ class CorruptValueOCR(CorruptValue):
 
        If there are several OCR variations then one will be randomly chosen.
     """
+
+    # in_str = in_str.decode("UTF-8")
 
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
@@ -1319,11 +1325,13 @@ class CorruptUnknownCharacter(CorruptValue):
        string by randomly selecting an edit operation and position in the
        string where to apply this edit.
     """
+    temp = in_str
+    in_str = in_str.decode("UTF-8")
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
     mod_pos = self.position_function(in_str)
     new_str = in_str[:mod_pos] + self.unknown_char + in_str[mod_pos + 1:]
-    return new_str
+    return str(new_str.encode("UTF-8", errors='strict'))
 
 class CorruptAbbreviatedNameForms(CorruptValue):
 
@@ -1361,10 +1369,12 @@ class CorruptAbbreviatedNameForms(CorruptValue):
        string by randomly selecting an edit operation and position in the
        string where to apply this edit.
     """
+    in_str = in_str.decode("UTF-8")
+
     if (len(in_str) == 0) or (len(in_str) < self.num_of_char):  # Empty string, no modification possible
       return in_str
     new_str = in_str[:self.num_of_char]
-    return new_str
+    return str(new_str.encode("UTF-8", errors='strict'))
 
 # =============================================================================
 

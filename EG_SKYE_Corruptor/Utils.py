@@ -22,9 +22,10 @@ def readInFileAsDict(inputFile):
     return list(dataset_file)
 
 def extractLabels(data, idColumnLabel = "rec-id"):
-    print data[idColumnLabel]
-    labels = [idColumnLabel] + data[idColumnLabel]
+    #print data[idColumnLabel]
+    labels = data[idColumnLabel]
     del data[idColumnLabel]
+    #del labels[idColumnLabel]
 
     return labels
 
@@ -122,8 +123,9 @@ def removeCryptIDs(dataset, labels):
     #         print i
 
     for r in dataset.values():
-        del r[labels.index('rec-id')]
         del r[labels.index('crptr-record')]
+
+    del labels[labels.index('crptr-record')]
 
     return dataset
 
@@ -153,15 +155,22 @@ def removeOrigonalRecordsForWhichDuplicateExists(dataset, labels):
     #     if None in i:
     #         print i
 
+    delete = []
+
     for r in dataset:
-        index = labels.index('rec-id')
-        if "dup" in r[index]:
-            rec, recid, dup, dupid = r[index].split('-')
+        # index = labels.index('rec-id')
+        if "dup" in r:
+            rec, recid, dup, dupid = r.split('-')
             org_of_dup = rec + "-" + recid + "-org"
 
-            for r2 in dataset:
-                if org_of_dup == r2[index]:
-                    dataset.remove(r2)
+            delete.append(org_of_dup)
+
+            # for r2 in dataset:
+            #     if org_of_dup == r2:
+            #         dataset.remove(r2)
+
+    for d in delete:
+        del dataset[d]
 
     return dataset
 
@@ -198,7 +207,15 @@ def outputDictToCSV(labels, dict, outputFile, encoding = 'utf-8'):
         outputWriter.writerow(labels)
 
         for rec_id in rec_id_list:
-            outputWriter.writerow([rec_id] + dict[rec_id])
+            outputWriter.writerow(dict[rec_id])
+            # row = [unicode(cell, 'utf-8') for cell in dict[rec_id]]
+            # row = [s.decode('utf-8') for s in dict[rec_id]]
+            # outputWriter.writerow(row)
+
+            # outputWriter.writerow(dict[rec_id])
+
+
+                # yield [unicode(cell, 'utf-8') for cell in row]
 
 
 

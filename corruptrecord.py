@@ -162,7 +162,7 @@ class CorruptSwapAttributes(CorruptRecord):
        class constructor.
     """
 
-    self.attr_name_list = attr_name_list[1:]
+    self.attr_name_list = attr_name_list
 
     self.attr1 = None
     self.attr2 = None
