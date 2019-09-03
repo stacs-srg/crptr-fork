@@ -7,18 +7,11 @@
 # This script performs corruption based on a provided config file
 # This script then outputs the corrupted records to new files ready to be used with linkage-java
 
-import os
-
-import EGCorruptorDefinitions
+import CorruptorDefinitions
 import Utils
 import crptr
 import sys
 import csv
-
-def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
-    csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
-    for row in csv_reader:
-        yield [unicode(cell, 'utf-8') for cell in row]
 
 def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
@@ -37,7 +30,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     dataset = Utils.convertFromListOfDictsToDictOfLists(dataset)
     labels = Utils.extractLabels(dataset)
 
-    corruptor = EGCorruptorDefinitions.BirthCorruptors(labels, lookupFilesDir)
+    corruptor = CorruptorDefinitions.BirthCorruptors(labels, lookupFilesDir)
 
     Utils.setDeterminism(deterministic, seed)
 
@@ -173,7 +166,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     records = Utils.convertFromListOfDictsToDictOfLists(records)
     labels = Utils.extractLabels(records)
 
-    corruptor = EGCorruptorDefinitions.DeathCorruptors(labels, lookupFilesDir)
+    corruptor = CorruptorDefinitions.DeathCorruptors(labels, lookupFilesDir)
 
     Utils.setDeterminism(deterministic, seed)
 
@@ -332,7 +325,7 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
     records = Utils.convertFromListOfDictsToDictOfLists(records)
     labels = Utils.extractLabels(records)
 
-    corruptor = EGCorruptorDefinitions.MarriageCorruptors(labels, lookupFilesDir)
+    corruptor = CorruptorDefinitions.MarriageCorruptors(labels, lookupFilesDir)
 
     Utils.setDeterminism(deterministic, seed)
 

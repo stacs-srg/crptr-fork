@@ -1,12 +1,12 @@
-import EGSkyeCorrupter
+import Corrupter
 import time
 
 print "Init: " + str(time.time())
 
 popNames = {"synthetic-scotland"}
-popSizes = {"13k","133k","530k"}
-popNumbers = {"1","2","3","4","5"}
-corruptionNumbers = {"1","2"}
+popSizes = {"13k", "133k"} #{"13k","133k","530k"}
+popNumbers = {"1","2" } # ,"3","4","5"}
+corruptionNumbers = {"5","10"}
 
 for popName in popNames:
     for popSize in popSizes:
@@ -43,21 +43,21 @@ for popName in popNames:
                 
                 st = time.time()
                 print "Start time: " + str(time.time())
-                EGSkyeCorrupter.birthCorruptor(birthInputFile, birthOutputFile, birthLogFile, lookupFilesDir, deterministic, seed,
-                                               proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
-                                               numberOfModificationsPerRecord, recordLevelProportion)
+                Corrupter.birthCorruptor(birthInputFile, birthOutputFile, birthLogFile, lookupFilesDir, deterministic, seed,
+                                         proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
+                                         numberOfModificationsPerRecord, recordLevelProportion)
                 print "Birth Duration: " + str(time.time()-st)
                 
                 st = time.time()
-                EGSkyeCorrupter.deathCorruptor(deathInputFile, deathOutputFile, deathLogFile, lookupFilesDir, deterministic, seed,
-                                               proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
-                                               numberOfModificationsPerRecord, recordLevelProportion)
+                Corrupter.deathCorruptor(deathInputFile, deathOutputFile, deathLogFile, lookupFilesDir, deterministic, seed,
+                                         proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
+                                         numberOfModificationsPerRecord, recordLevelProportion)
                 print "Death Duration: " + str(time.time()-st)
                 
                 st = time.time()
-                EGSkyeCorrupter.marriageCorruptor(marriageInputFile, marriageOutputFile, marriageLogFile, lookupFilesDir, deterministic, seed,
-                                               proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
-                                               numberOfModificationsPerRecord, recordLevelProportion)
+                Corrupter.marriageCorruptor(marriageInputFile, marriageOutputFile, marriageLogFile, lookupFilesDir, deterministic, seed,
+                                            proportionOfRecordsToCorrupt, maxModificationsPerAttribute,
+                                            numberOfModificationsPerRecord, recordLevelProportion)
                 print "Marriage Duration: " + str(time.time()-st)
                 print "End time: " + str(time.time())
                     
