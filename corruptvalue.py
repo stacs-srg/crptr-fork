@@ -577,7 +577,7 @@ class CorruptValueOCR(CorruptValue):
        If there are several OCR variations then one will be randomly chosen.
     """
 
-    # in_str = in_str.decode("UTF-8")
+    in_str = in_str.decode("UTF-8")
 
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
@@ -623,7 +623,7 @@ class CorruptValueOCR(CorruptValue):
       else:
         try_num += 1
 
-    return mod_str
+    return str(mod_str.encode("UTF-8", errors='strict'))
 
 # =============================================================================
 

@@ -18,11 +18,8 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     so = sys.stdout
     logOutput = open(logFile, 'w')
     sys.stdout = logOutput
-    # csv.DictReader
-    dataset = list(csv.DictReader(open(inputFile)))
 
-    # handle commas
-    # dataset = Utils.removeCommas(dataset)
+    dataset = list(csv.DictReader(open(inputFile)))
 
     # add crptr ids
     dataset = Utils.addCryptIDs(dataset)

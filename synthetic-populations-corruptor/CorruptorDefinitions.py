@@ -50,6 +50,13 @@ class Corruptors:
             categories_list=["D", ""]
         )
 
+        self.ocr = corruptvalue.CorruptValueOCR(
+            lookup_file_name = self.lookupFilesDir + '/ocr-variations.csv',
+            has_header_line=False,
+            unicode_encoding=self.encoding,
+            position_function=positionfunctions.position_mod_uniform
+        )
+
         # =====================================================================
         # Attribute level
         # =====================================================================
@@ -87,31 +94,52 @@ class Corruptors:
                                            (0.05, self.missingValue),
                                            (0.35, self.phoneticVariation)]
 
+        self.forenameCorruptionGroupingOCR = [(0.6, self.ocr),
+                                           (0.05, self.missingValue),
+                                           (0.35, self.phoneticVariation)]
+
         self.addressCorruptionGrouping = [(0.3, self.generalCharacter),
-                                           (0.4, self.keyboardShift),
-                                           (0.2, self.unknownCharacter),
-                                           (0.1, self.missingValue)]
+                                          (0.4, self.keyboardShift),
+                                          (0.2, self.unknownCharacter),
+                                          (0.1, self.missingValue)]
+
+        self.addressCorruptionGroupingOCR = [(0.9, self.ocr),
+                                          (0.1, self.missingValue)]
 
         self.occupationCorruptionGrouping = [(0.3, self.generalCharacter),
-                                           (0.2, self.keyboardShift),
-                                           (0.2, self.unknownCharacter),
-                                           (0.3, self.missingValue)]
+                                             (0.2, self.keyboardShift),
+                                             (0.2, self.unknownCharacter),
+                                             (0.3, self.missingValue)]
 
-        self.surnameCorruptionGrouping =   [(0.2, self.generalCharacter),
-                                       (0.1, self.keyboardShift),
-                                       (0.1, self.unknownCharacter),
-                                       (0.2, self.surnameMisspell),
-                                       (0.05, self.missingValue),
-                                       (0.35, self.phoneticVariation)]
+        self.occupationCorruptionGroupingOCR = [(0.7, self.ocr),
+                                             (0.3, self.missingValue)]
+
+        self.surnameCorruptionGrouping = [(0.2, self.generalCharacter),
+                                          (0.1, self.keyboardShift),
+                                          (0.1, self.unknownCharacter),
+                                          (0.2, self.surnameMisspell),
+                                          (0.05, self.missingValue),
+                                          (0.35, self.phoneticVariation)]
+
+        self.surnameCorruptionGroupingOCR = [(0.4, self.ocr),
+                                          (0.2, self.surnameMisspell),
+                                          (0.05, self.missingValue),
+                                          (0.35, self.phoneticVariation)]
 
         self.splitDateCorruptionGrouping = [(0.7, self.keyboardShift),
                                        (0.2, self.generalCharacter),
                                        (0.1, self.missingValue)]
 
+        self.splitDateCorruptionGroupingOCR = [(0.9, self.ocr),
+                                            (0.1, self.missingValue)]
+
         self.deceasedCorruptionGrouping = [(0.5, self.deceasedFlip),
                                            (0.2, self.keyboardShift),
                                            (0.05, self.unknownCharacter),
                                            (0.25, self.missingValue)]
+
+        self.deceasedCorruptionGroupingOCR = [(0.5, self.deceasedFlip),
+                                           (0.5, self.ocr)]
 
         # =====================================================================
         # Record level
