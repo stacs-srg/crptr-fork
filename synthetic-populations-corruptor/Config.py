@@ -6,8 +6,8 @@ import sys
 print "Init: " + str(time.time())
 
 popNames = {"synthetic-scotland"}
-popSizes = {"13k"} #{"13k","133k","530k"}
-popNumbers = {"1","2" } # ,"3","4","5"}
+popSizes = {"13k","133k","531k","1222k","2482k","5003k"} #,"10m"
+popNumbers = {"1","2","3","4","5"}
 corruptionLetters = {"A", "B", "C"}
 
 for popName in popNames:
