@@ -18,19 +18,19 @@ for popName in popNames:
             for corruptionLetter in  corruptionLetters:
     
                 # Files
-                birthInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/"+popName+"/_"+popSize+"/_"+popNumber+"/clean/birth_records.csv"
-                birthOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/birth_records.csv"
-                birthLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/birth_crptr_log.csv"
+                birthInputFile = "/home/tsd4/corrupt/_"+popSize+"/_"+popNumber+"/clean/birth_records.csv"
+                birthOutputFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/birth_records.csv"
+                birthLogFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/birth_crptr_log.csv"
                 
-                deathInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/"+popName+"/_"+popSize+"/_"+popNumber+"/clean/death_records.csv"
-                deathOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/death_records.csv"
-                deathLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/death_crptr_log.csv"
+                deathInputFile = "/home/tsd4/corrupt/_"+popSize+"/_"+popNumber+"/clean/death_records.csv"
+                deathOutputFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/death_records.csv"
+                deathLogFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/death_crptr_log.csv"
                 
-                marriageInputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/"+popName+"/_"+popSize+"/_"+popNumber+"/clean/marriage_records.csv"
-                marriageOutputFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/marriage_records.csv"
-                marriageLogFile = "/Volumes/TSD4exHDD3/valipop-synthetic-populations-"+dirName+"/src/main/resources/uk/ac/standrews/cs/data/synthetic/" + popName +"/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/marriage_crptr_log.csv"
+                marriageInputFile = "/home/tsd4/corrupt/_"+popSize+"/_"+popNumber+"/clean/marriage_records.csv"
+                marriageOutputFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/marriage_records.csv"
+                marriageLogFile = "/home/tsd4/corrupt/_" + popSize +"/_" + popNumber +"/corrupted/_" + corruptionLetter + "/log/marriage_crptr_log.csv"
                 
-                lookupFilesDir = "/Users/tdalton/tom/phd/repos/crptr-fork/lookup-files"
+                lookupFilesDir = "/home/tsd4/corrupt/crptr-fork/lookup-files"
                 
 
                 # Determinism
