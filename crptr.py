@@ -99,7 +99,7 @@ class CorruptDataSet:
     self.attr_mod_data_dict =    None
 
     # Process the keyword arguments
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('number_of_m')):
         basefunctions.check_is_integer('number_of_mod_records', value)
@@ -122,8 +122,8 @@ class CorruptDataSet:
 
       elif (keyword.startswith('num_dup_')):
         if (value not in ['uniform', 'poisson', 'zipf']):
-          raise Exception, 'Illegal value given for "num_dup_dist": %s' % \
-                           (str(value))
+          raise Exception('Illegal value given for "num_dup_dist": %s' % \
+                           (str(value)))
         self.num_dup_dist = value
 
       elif (keyword.startswith('num_mod_per_r')):
@@ -244,29 +244,29 @@ class CorruptDataSet:
         self.prob_dist_list.append((num_dup,
                                     zipf_num[i]+self.prob_dist_list[-1][1]))
 
-    print 'Probability distribution for number of duplicates per record:'
-    print self.prob_dist_list
+    print('Probability distribution for number of duplicates per record:')
+    print(self.prob_dist_list)
 
     # Check probability list for attributes and dictionary for attributes - - -
     # if they sum to 1.0
     #
     attr_prob_sum = sum(self.attr_mod_prob_dict.values())
     if (abs(attr_prob_sum - 1.0) > 0.0000001):
-      raise Exception, 'Attribute modification probabilities do not sum ' + \
-                       'to 1.0: %f' % (attr_prob_sum)
+      raise Exception('Attribute modification probabilities do not sum ' + \
+                       'to 1.0: %f' % (attr_prob_sum))
     for attr_name in self.attr_mod_prob_dict:
       assert self.attr_mod_prob_dict[attr_name] >= 0.0, \
              'Negative probability given in "attr_mod_prob_dict"'
       if attr_name not in self.attribute_name_list:
-        raise Exception, 'Attribute name "%s" in "attr_mod_prob_dict" not ' % \
-                         (attr_name) + 'listed in "attribute_name_list"'
+        raise Exception('Attribute name "%s" in "attr_mod_prob_dict" not ' % \
+                         (attr_name) + 'listed in "attribute_name_list"')
 
     # Check details of attribute modification data dictionary
     #
-    for (attr_name, attr_mod_data_list) in self.attr_mod_data_dict.items():
+    for (attr_name, attr_mod_data_list) in list(self.attr_mod_data_dict.items()):
       if attr_name not in self.attribute_name_list:
-        raise Exception, 'Attribute name "%s" in "attr_mod_data_dict" not ' % \
-                         (attr_name) + 'listed in "attribute_name_list"'
+        raise Exception('Attribute name "%s" in "attr_mod_data_dict" not ' % \
+                         (attr_name) + 'listed in "attribute_name_list"')
       basefunctions.check_is_list('attr_mod_data_dict entry',
                                   attr_mod_data_list)
       prob_sum = 0.0
@@ -279,14 +279,14 @@ class CorruptDataSet:
                                           list_elem[0])
         prob_sum += list_elem[0]
       if (abs(prob_sum - 1.0) > 0.0000001):
-        raise Exception, 'Probability sum is no 1.0 for attribute "%s"' % \
-                         (attr_name)
+        raise Exception('Probability sum is no 1.0 for attribute "%s"' % \
+                         (attr_name))
 
     # Generate a list with attribute probabilities summed for easy selection
     #
     self.attr_mod_prob_list = []
     prob_sum = 0
-    for (attr_name, attr_prob) in self.attr_mod_prob_dict.items():
+    for (attr_name, attr_prob) in list(self.attr_mod_prob_dict.items()):
       prob_sum += attr_prob
       self.attr_mod_prob_list.append([prob_sum, attr_name])
     #print self.attr_mod_prob_list
@@ -310,7 +310,7 @@ class CorruptDataSet:
                            # records, value their number of duplicates
     total_num_dups = 0     # Total number of duplicates generated
 
-    org_rec_id_list = rec_dict.keys()
+    org_rec_id_list = list(rec_dict.keys())
     random.shuffle(org_rec_id_list)
 
     org_rec_i = 0  # Loop counter over which record to assign duplicates to
@@ -344,7 +344,7 @@ class CorruptDataSet:
     # Deal with the case where every original record has a number of duplicates
     # but not enough duplicates are generated in total
     #
-    org_rec_id_list = rec_dict.keys()
+    org_rec_id_list = list(rec_dict.keys())
     random.shuffle(org_rec_id_list)
 
     while (total_num_dups < self.number_of_mod_records):
@@ -361,17 +361,17 @@ class CorruptDataSet:
     # Generate a histogram of number of duplicates per record
     #
     dup_histo = {}
-    for (org_rec_id_to_mod, num_dups) in dup_rec_num_dict.iteritems():
+    for (org_rec_id_to_mod, num_dups) in dup_rec_num_dict.items():
       dup_count = dup_histo.get(num_dups, 0) + 1
       dup_histo[num_dups] = dup_count
-    print 'Distribution of number of original records with certain number ' + \
-          'of duplicates:'
-    dup_histo_keys = dup_histo.keys()
+    print('Distribution of number of original records with certain number ' + \
+          'of duplicates:')
+    dup_histo_keys = list(dup_histo.keys())
     dup_histo_keys.sort()
     for num_dups in dup_histo_keys:
-      print ' Number of records with %d duplicates: %d' % \
-            (num_dups, dup_histo[num_dups])
-    print
+      print(' Number of records with %d duplicates: %d' % \
+            (num_dups, dup_histo[num_dups]))
+    print()
 
     num_dup_rec_created = 0  # Count how many duplicate records have been
                              # generated
@@ -379,7 +379,7 @@ class CorruptDataSet:
 
     # Main loop over all original records for which to generate duplicates - -
     #
-    for (org_rec_id_to_mod, num_dups) in dup_rec_num_dict.iteritems():
+    for (org_rec_id_to_mod, num_dups) in dup_rec_num_dict.items():
       assert (num_dups > 0) and (num_dups <= self.max_num_dup_per_rec)
       self.process_records(num_dup_rec_created, num_dups, org_rec_id_to_mod, rec_dict)
 
@@ -387,9 +387,9 @@ class CorruptDataSet:
     return rec_dict
 
   def process_records(self, num_dup_rec_created, num_dups, org_rec_id_to_mod, rec_dict):
-    print
-    print 'Generating %d modified (duplicate) records for record "%s"' % \
-          (num_dups, org_rec_id_to_mod)
+    print()
+    print('Generating %d modified (duplicate) records for record "%s"' % \
+          (num_dups, org_rec_id_to_mod))
     rec_to_mod_list = rec_dict[org_rec_id_to_mod]
     d = 0  # Loop counter for duplicates for this record
     this_dup_rec_list = []  # A list of all duplicates for this record
@@ -402,8 +402,8 @@ class CorruptDataSet:
 
       org_rec_num = org_rec_id_to_mod.split('-')[1]
       dup_rec_id = 'rec-%s-dup-%d' % (org_rec_num, d)
-      print '  Generate identifier for duplicate record based on "%s": %s' \
-            % (org_rec_id_to_mod, dup_rec_id)
+      print('  Generate identifier for duplicate record based on "%s": %s' \
+            % (org_rec_id_to_mod, dup_rec_id))
 
       # Count the number of modifications in this record (counted as the
       # number of modified attributes)
@@ -414,7 +414,7 @@ class CorruptDataSet:
       # that can be modified
       #
       attr_mod_count_dict = {}
-      for attr_name in self.attr_mod_prob_dict.keys():
+      for attr_name in list(self.attr_mod_prob_dict.keys()):
         attr_mod_count_dict[attr_name] = 0
 
       # Abort generating modifications after a larger number of tries to
@@ -455,14 +455,14 @@ class CorruptDataSet:
             new_rec_val = corruptor_method.corrupt_value(mod_rec_list)
             org_rec_val = rec_to_mod_list[:]
             if (new_rec_val != org_rec_val):
-              print '  Selected attribute for modification:', mod_attr_name
-              print '    Selected corruptor:', corruptor_method.name
+              print('  Selected attribute for modification:', mod_attr_name)
+              print('    Selected corruptor:', corruptor_method.name)
 
               # The following weird string printing construct is to overcome
               # problems with printing non-ASCII characters
               #
-              print '      Original record value:', str(org_rec_val)[1:-1]
-              print '      Modified record value:', str(new_rec_val)[1:-1]
+              print('      Original record value:', str(org_rec_val)[1:-1])
+              print('      Modified record value:', str(new_rec_val)[1:-1])
 
               dup_rec_list = new_rec_val
 
@@ -475,7 +475,7 @@ class CorruptDataSet:
               #
               num_mod_in_record = 0
 
-              for num_attr_mods in attr_mod_count_dict.values():
+              for num_attr_mods in list(attr_mod_count_dict.values()):
                 if (num_attr_mods > 0):
                   num_mod_in_record += 1  # One more modification
                 assert num_mod_in_record <= self.num_mod_per_rec
@@ -495,14 +495,14 @@ class CorruptDataSet:
             # record
             #
             if (new_attr_val != org_attr_val):
-              print '  Selected attribute for modification:', mod_attr_name
-              print '    Selected corruptor:', corruptor_method.name
+              print('  Selected attribute for modification:', mod_attr_name)
+              print('    Selected corruptor:', corruptor_method.name)
 
               # The following weird string printing construct is to overcome
               # problems with printing non-ASCII characters
               #
-              print '      Original attribute value:', str([org_attr_val])[1:-1]
-              print '      Modified attribute value:', str([new_attr_val])[1:-1]
+              print('      Original attribute value:', str([org_attr_val])[1:-1])
+              print('      Modified attribute value:', str([new_attr_val])[1:-1])
 
               dup_rec_list[mod_attr_name_index] = new_attr_val
 
@@ -515,7 +515,7 @@ class CorruptDataSet:
               #
               num_mod_in_record = 0
 
-              for num_attr_mods in attr_mod_count_dict.values():
+              for num_attr_mods in list(attr_mod_count_dict.values()):
                 if (num_attr_mods > 0):
                   num_mod_in_record += 1  # One more modification
               assert num_mod_in_record <= self.num_mod_per_rec
@@ -533,8 +533,8 @@ class CorruptDataSet:
         for check_dup_rec in this_dup_rec_list:
           if (check_dup_rec == dup_rec_list):  # Same as a previous duplicate
             is_diff = False
-            print 'Same duplicate:', check_dup_rec
-            print '               ', dup_rec_list
+            print('Same duplicate:', check_dup_rec)
+            print('               ', dup_rec_list)
 
       if (is_diff == True):  # Only keep duplicate records that are different
 
@@ -545,18 +545,18 @@ class CorruptDataSet:
         d += 1
         num_dup_rec_created += 1
 
-        print 'Original record:'
-        print ' ', rec_to_mod_list
-        print 'Record with %d modified attributes' % (num_mod_in_record),
+        print('Original record:')
+        print(' ', rec_to_mod_list)
+        print('Record with %d modified attributes' % (num_mod_in_record), end=' ')
         attr_mod_str = '('
         for a in self.attribute_name_list:
           if (attr_mod_count_dict.get(a, 0) > 0):
             attr_mod_str += '%d in %s, ' % (attr_mod_count_dict[a], a)
         attr_mod_str = attr_mod_str[:-1] + '):'
-        print attr_mod_str
-        print ' ', dup_rec_list
-        print '%d of %d duplicate records generated so far' % \
-              (num_dup_rec_created, self.number_of_mod_records)
-        print
+        print(attr_mod_str)
+        print(' ', dup_rec_list)
+        print('%d of %d duplicate records generated so far' % \
+              (num_dup_rec_created, self.number_of_mod_records))
+        print()
 
 # =============================================================================

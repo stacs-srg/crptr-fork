@@ -41,7 +41,7 @@ class CorruptValue:
     # Process the keyword argument (all keywords specific to a certain data
     # generator type were processed in the derived class constructor)
     #
-    for (keyword, value) in base_kwargs.items():
+    for (keyword, value) in list(base_kwargs.items()):
 #AHMAD#This is checking from calls in generate-data-english.py file
 #AHMAD# 'position' realted to the inserted argument in the file config and same to others
       if (keyword.startswith('position')):
@@ -51,8 +51,8 @@ class CorruptValue:
         self.position_function = value
 
       else:
-        raise Exception, 'Illegal constructor argument keyword: "%s"' % \
-              (str(keyword))
+        raise Exception('Illegal constructor argument keyword: "%s"' % \
+              (str(keyword)))
 
     basefunctions.check_is_function_or_method('position_function',
                                               self.position_function)
@@ -61,9 +61,9 @@ class CorruptValue:
     #
     pos = self.position_function('test')
     if ((not isinstance(pos, int)) or (pos < 0) or (pos > 3)):
-      raise Exception, 'Position function returns an illegal value (either' + \
+      raise Exception('Position function returns an illegal value (either' + \
                        'not an integer or and integer out of range: %s' % \
-                       (str(pos))
+                       (str(pos)))
 
   # ---------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ class CorruptValue:
        See implementations in derived classes for details.
     """
 
-    raise Exception, 'Override abstract method in derived class'
+    raise Exception('Override abstract method in derived class')
 
 # =============================================================================
 
@@ -109,7 +109,7 @@ class CorruptMissingValue(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('miss')):
         basefunctions.check_is_string('missing_val', value)
@@ -169,7 +169,7 @@ class CorruptValueEdit(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('char')):
         basefunctions.check_is_function_or_method('char_set_funct', value)
@@ -212,7 +212,7 @@ class CorruptValueEdit(CorruptValue):
 
     if (abs((self.insert_prob + self.delete_prob + self.substitute_prob + \
          self.transpose_prob) - 1.0) > 0.0000001):
-      raise Exception, 'The four edit probabilities do not sum to 1.0'
+      raise Exception('The four edit probabilities do not sum to 1.0')
 
     # Calculate the probability ranges for the four edit operations
     #
@@ -349,7 +349,7 @@ class CorruptValueKeyboard(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('row')):
         basefunctions.check_is_normalised('row_prob', value)
@@ -370,8 +370,8 @@ class CorruptValueKeyboard(CorruptValue):
     basefunctions.check_is_normalised('col_prob', self.col_prob)
 
     if (abs((self.row_prob + self.col_prob) - 1.0) > 0.0000001):
-      raise Exception, 'Sum of row and column probablities does not sum ' + \
-                       'to 1.0'
+      raise Exception('Sum of row and column probablities does not sum ' + \
+                       'to 1.0')
 
     # Keyboard substitutions gives two dictionaries with the neigbouring keys
     # for all leters both for rows and columns (based on ideas implemented by
@@ -503,7 +503,7 @@ class CorruptValueOCR(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
         basefunctions.check_is_non_empty_string('lookup_file_name', value)
@@ -541,20 +541,20 @@ class CorruptValueOCR(CorruptValue):
     #
     for rec_list in lookup_file_data:
       if (len(rec_list) != 2):
-        raise Exception, 'Illegal format in OCR variations lookup file ' + \
-                         '%s: %s' % (self.lookup_file_name, str(rec_list))
+        raise Exception('Illegal format in OCR variations lookup file ' + \
+                         '%s: %s' % (self.lookup_file_name, str(rec_list)))
       org_val = rec_list[0].strip()
       var_val = rec_list[1].strip()
 
       if (org_val == ''):
-        raise Exception, 'Empty original OCR value in lookup file %s' % \
-                         (self.lookup_file_name)
+        raise Exception('Empty original OCR value in lookup file %s' % \
+                         (self.lookup_file_name))
       if (var_val == ''):
-        raise Exception, 'Empty OCR variation value in lookup file %s' % \
-                         (self.lookup_file_name)
+        raise Exception('Empty OCR variation value in lookup file %s' % \
+                         (self.lookup_file_name))
       if (org_val == var_val):
-        raise Exception, 'OCR variation is the same as original value in ' + \
-                         'lookup file %s' % (self.lookup_file_name)
+        raise Exception('OCR variation is the same as original value in ' + \
+                         'lookup file %s' % (self.lookup_file_name))
 
       # Now insert the OCR original value and variation twice (with original
       # and variation both as key and value), i.e. swapped
@@ -612,8 +612,8 @@ class CorruptValueOCR(CorruptValue):
         # Randomly select one of the possible modifications that can be applied
         #
         mod_to_apply = random.choice(mod_options)
-        assert mod_to_apply[0] in self.ocr_val_dict.keys()
-        assert mod_to_apply[2] in self.ocr_val_dict.keys()
+        assert mod_to_apply[0] in list(self.ocr_val_dict.keys())
+        assert mod_to_apply[2] in list(self.ocr_val_dict.keys())
 
         mod_str = in_str[:mod_pos] + mod_to_apply[2] + \
                   in_str[mod_pos+mod_to_apply[1]:]
@@ -696,7 +696,7 @@ class CorruptValuePhonetic(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
         basefunctions.check_is_non_empty_string('lookup_file_name', value)
@@ -736,16 +736,16 @@ class CorruptValuePhonetic(CorruptValue):
     #
     for rec_list in lookup_file_data:
       if (len(rec_list) != 7):
-        raise Exception, 'Illegal format in phonetic lookup file %s: %s' \
-                         % (self.lookup_file_name, str(rec_list))
+        raise Exception('Illegal format in phonetic lookup file %s: %s' \
+                         % (self.lookup_file_name, str(rec_list)))
       val_tuple = ()
       for val in rec_list:
         if (val != ''):
           val = val.strip()
           val_tuple += val,
         else:
-          raise Exception, 'Empty value in phonetic lookup file %s" %s' % \
-                           (self.lookup_file_name, str(rec_list))
+          raise Exception('Empty value in phonetic lookup file %s" %s' % \
+                           (self.lookup_file_name, str(rec_list)))
       self.replace_table.append(val_tuple)
 
   # ---------------------------------------------------------------------------
@@ -1206,7 +1206,7 @@ class CorruptCategoricalValue(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
         basefunctions.check_is_non_empty_string('lookup_file_name', value)
@@ -1246,20 +1246,20 @@ class CorruptCategoricalValue(CorruptValue):
     #
     for rec_list in lookup_file_data:
       if (len(rec_list) != 2):
-        raise Exception, 'Illegal format in misspellings lookup file %s: %s' \
-                         % (self.lookup_file_name, str(rec_list))
+        raise Exception('Illegal format in misspellings lookup file %s: %s' \
+                         % (self.lookup_file_name, str(rec_list)))
 
       org_val =  rec_list[0].strip()
       if (org_val == ''):
-        raise Exception, 'Empty original attribute value in lookup file %s' % \
-                         (self.lookup_file_name)
+        raise Exception('Empty original attribute value in lookup file %s' % \
+                         (self.lookup_file_name))
       misspell_val = rec_list[1].strip()
       if (misspell_val == ''):
-        raise Exception, 'Empty misspelled attribute value in lookup ' + \
-                         'file %s' % (self.lookup_file_name)
+        raise Exception('Empty misspelled attribute value in lookup ' + \
+                         'file %s' % (self.lookup_file_name))
       if (org_val == misspell_val):
-        raise Exception, 'Misspelled value is the same as original value' + \
-                         ' in lookup file %s' % (self.lookup_file_name)
+        raise Exception('Misspelled value is the same as original value' + \
+                         ' in lookup file %s' % (self.lookup_file_name))
 
       this_org_val_list = self.misspell_dict.get(org_val, [])
       this_org_val_list.append(misspell_val)
@@ -1305,7 +1305,7 @@ class CorruptUnknownCharacter(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('unknown')):
         basefunctions.check_is_string('unknown_char', value)
@@ -1350,7 +1350,7 @@ class CorruptAbbreviatedNameForms(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('num')):
         basefunctions.check_is_integer('num_of_char', value)
@@ -1395,7 +1395,7 @@ class CorruptCategoricalDomain(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('categories')):
         basefunctions.check_is_list('categories_list', value)
@@ -1450,7 +1450,7 @@ class CorruptDate(CorruptValue):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('date_ord')):
         basefunctions.check_date_order('date_order', value)
@@ -1510,7 +1510,7 @@ class CorruptDate(CorruptValue):
       month = month.zfill(2)
       year = year.zfill(4)
     else:
-      print "date format and order is not correct"
+      print("date format and order is not correct")
 
     comp_mod = random.choice(self.components_to_modify)
     crpt_method = random.choice(self.date_corruption_methods)
@@ -1558,7 +1558,7 @@ class CorruptDate(CorruptValue):
       if comp_mod == "day":
         other_comp = ['month', 'year']
         swap_attr = random.choice(other_comp)
-        print swap_attr
+        print(swap_attr)
         if swap_attr == "month":
           h_day = day
           day = month
@@ -1570,7 +1570,7 @@ class CorruptDate(CorruptValue):
       elif comp_mod == "month":
         other_comp = ['day', 'year']
         swap_attr = random.choice(other_comp)
-        print swap_attr
+        print(swap_attr)
         if swap_attr == "day":
           h_month = month
           month = day
@@ -1582,7 +1582,7 @@ class CorruptDate(CorruptValue):
       elif comp_mod == "year":
         other_comp = ['day', 'month']
         swap_attr = random.choice(other_comp)
-        print swap_attr
+        print(swap_attr)
         if swap_attr == "day":
           h_year = year
           year = day
@@ -1595,55 +1595,55 @@ class CorruptDate(CorruptValue):
     elif crpt_method == "swap_digit":
       if comp_mod == "day":
         comp_lst = list(day)
-        print comp_lst
-        index_lst = range(0, len(comp_lst))
-        print index_lst
+        print(comp_lst)
+        index_lst = list(range(0, len(comp_lst)))
+        print(index_lst)
         swap_lst = sorted(random.sample(index_lst, 2))
-        print swap_lst
+        print(swap_lst)
         fst_index = comp_lst[swap_lst[0]]
-        print fst_index
+        print(fst_index)
         snd_index = comp_lst[swap_lst[1]]
-        print snd_index
+        print(snd_index)
         comp_lst[swap_lst[0]] = snd_index
         comp_lst[swap_lst[1]] = fst_index
         new_comp = ''.join(comp_lst)
-        print comp_lst
-        print new_comp
+        print(comp_lst)
+        print(new_comp)
         day = new_comp
 
       elif comp_mod == "month":
         comp_lst = list(month)
-        print comp_lst
-        index_lst = range(0, len(comp_lst))
-        print index_lst
+        print(comp_lst)
+        index_lst = list(range(0, len(comp_lst)))
+        print(index_lst)
         swap_lst = sorted(random.sample(index_lst, 2))
-        print swap_lst
+        print(swap_lst)
         fst_index = comp_lst[swap_lst[0]]
-        print fst_index
+        print(fst_index)
         snd_index = comp_lst[swap_lst[1]]
-        print snd_index
+        print(snd_index)
         comp_lst[swap_lst[0]] = snd_index
         comp_lst[swap_lst[1]] = fst_index
         new_comp = ''.join(comp_lst)
-        print comp_lst
-        print new_comp
+        print(comp_lst)
+        print(new_comp)
         month = new_comp
       elif comp_mod == "year":
         comp_lst = list(year)
-        print comp_lst
-        index_lst = range(0, len(comp_lst))
-        print index_lst
+        print(comp_lst)
+        index_lst = list(range(0, len(comp_lst)))
+        print(index_lst)
         swap_lst = sorted(random.sample(index_lst, 2))
-        print swap_lst
+        print(swap_lst)
         fst_index = comp_lst[swap_lst[0]]
-        print fst_index
+        print(fst_index)
         snd_index = comp_lst[swap_lst[1]]
-        print snd_index
+        print(snd_index)
         comp_lst[swap_lst[0]] = snd_index
         comp_lst[swap_lst[1]] = fst_index
         new_comp = ''.join(comp_lst)
-        print comp_lst
-        print new_comp
+        print(comp_lst)
+        print(new_comp)
         year = new_comp
 
     elif crpt_method == "full_month" or "abbr_month":
@@ -1658,13 +1658,13 @@ class CorruptDate(CorruptValue):
       if crpt_method == "full_month":
         full_month_dict = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, \
                            'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
-        for key, value in full_month_dict.iteritems():
+        for key, value in full_month_dict.items():
           if value == month:
             month = key
       elif crpt_method == "abbr_month":
         abbr_month_dict = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, \
                            'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12}
-        for key, value in abbr_month_dict.iteritems():
+        for key, value in abbr_month_dict.items():
           if value == month:
             month = key
 

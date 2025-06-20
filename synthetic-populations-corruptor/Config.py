@@ -1,9 +1,9 @@
-import CorrupterBStandard
-import CorrupterAocr
+from . import CorrupterBStandard
+from . import CorrupterAocr
 import time
 import sys
 
-print "Init: " + str(time.time())
+print("Init: " + str(time.time()))
 
 dirName = "scotland-l"
 

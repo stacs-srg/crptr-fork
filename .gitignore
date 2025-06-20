@@ -1,0 +1,4 @@
+syntax: glob
+
+**/*.py.bak
+__pycache__

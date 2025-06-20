@@ -7,8 +7,8 @@
 # This script performs corruption based on a provided config file
 # This script then outputs the corrupted records to new files ready to be used with linkage-java
 
-import CorruptorDefinitions
-import Utils
+from . import CorruptorDefinitions
+from . import Utils
 import crptr
 import sys
 import csv
@@ -114,7 +114,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
     numberOfRecords = len(dataset)
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
-    print "Records to be corrupted: " + str(numberToModify)
+    print("Records to be corrupted: " + str(numberToModify))
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
@@ -274,7 +274,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
 
     numberOfRecords = len(records)
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
-    print "Records to be corrupted: " + str(numberToModify)
+    print("Records to be corrupted: " + str(numberToModify))
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
@@ -436,7 +436,7 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
 
     numberOfRecords = len(records)
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
-    print "Records to be corrupted: " + str(numberToModify)
+    print("Records to be corrupted: " + str(numberToModify))
 
     crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,

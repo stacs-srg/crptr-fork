@@ -41,7 +41,7 @@ class CorruptRecord:
     # Process the keyword argument (all keywords specific to a certain data
     # generator type were processed in the derived class constructor)
     #
-    for (keyword, value) in base_kwargs.items():
+    for (keyword, value) in list(base_kwargs.items()):
 #AHMAD#This is checking from calls in generate-data-english.py file
 #AHMAD# 'position' realted to the inserted argument in the file config and same to others
       if (keyword.startswith('position')):
@@ -51,8 +51,8 @@ class CorruptRecord:
         self.position_function = value
 
       else:
-        raise Exception, 'Illegal constructor argument keyword: "%s"' % \
-              (str(keyword))
+        raise Exception('Illegal constructor argument keyword: "%s"' % \
+              (str(keyword)))
 
     basefunctions.check_is_function_or_method('position_function',
                                               self.position_function)
@@ -61,9 +61,9 @@ class CorruptRecord:
     #
     pos = self.position_function('test')
     if ((not isinstance(pos, int)) or (pos < 0) or (pos > 3)):
-      raise Exception, 'Position function returns an illegal value (either' + \
+      raise Exception('Position function returns an illegal value (either' + \
                        'not an integer or and integer out of range: %s' % \
-                       (str(pos))
+                       (str(pos)))
 
   # ---------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ class CorruptRecord:
        See implementations in derived classes for details.
     """
 
-    raise Exception, 'Override abstract method in derived class'
+    raise Exception('Override abstract method in derived class')
 
 # =============================================================================
 
@@ -109,7 +109,7 @@ class CorruptClearRecord(CorruptRecord):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('clear')):
         basefunctions.check_is_string('clear_val', value)
@@ -175,20 +175,20 @@ class CorruptSwapAttributes(CorruptRecord):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('attr1')):
         basefunctions.check_is_string('attr1', value)
         self.attr1 = value
         if (value not in attr_name_list):
-            raise Exception, 'Value of "%s" is not in dataset attributes. Check dataset correct attributes ' % str(value)
+            raise Exception('Value of "%s" is not in dataset attributes. Check dataset correct attributes ' % str(value))
 
 
       elif (keyword.startswith('attr2')):
         basefunctions.check_is_string('attr2', value)
         self.attr2 = value
         if (value not in attr_name_list):
-            raise Exception, 'Value of "%s" is not in dataset attributes. Check dataset correct attributes ' % str(value)
+            raise Exception('Value of "%s" is not in dataset attributes. Check dataset correct attributes ' % str(value))
       else:
         base_kwargs[keyword] = value
 
@@ -258,19 +258,19 @@ class CorruptOverflowAttributes(CorruptRecord):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('attr1')):
         basefunctions.check_is_string('attr1', value)
         self.attr1 = value
         if (value not in attr_name_list):
-            raise Exception, 'Value of "%s" is not in dataset attributes. Check dataset correct attributes : %s' % str(value)
+            raise Exception('Value of "%s" is not in dataset attributes. Check dataset correct attributes : %s' % str(value))
 
       elif (keyword.startswith('attr2')):
         basefunctions.check_is_string('attr2', value)
         self.attr2 = value
         if (value not in attr_name_list):
-            raise Exception, 'Value of "%s" is not in dataset attributes. Check dataset correct attributes : %s' % str(value)
+            raise Exception('Value of "%s" is not in dataset attributes. Check dataset correct attributes : %s' % str(value))
 
       elif (keyword.startswith('overflow')):
         basefunctions.check_is_normalised('overflow_level', value)
@@ -300,22 +300,22 @@ class CorruptOverflowAttributes(CorruptRecord):
     if self.start_pos == 'beginning':
         overflow_len = len(attr2_val) * self.overflow_level
         overflow_len = int(overflow_len)
-        print overflow_len
+        print(overflow_len)
         new_attr1_val = attr1_val + attr2_val[:overflow_len]
-        print new_attr1_val
+        print(new_attr1_val)
         new_attr2_val = attr2_val[overflow_len:]
-        print new_attr2_val
+        print(new_attr2_val)
         new_list[attr1_idx] = new_attr1_val
         new_list[attr2_idx] = new_attr2_val
 
     elif self.start_pos == 'ending':
         overflow_len = len(attr1_val) * self.overflow_level
         overflow_len = int(overflow_len)
-        print overflow_len
+        print(overflow_len)
         new_attr2_val = attr1_val[overflow_len:] + attr2_val
-        print new_attr2_val
+        print(new_attr2_val)
         new_attr1_val = attr1_val[:overflow_len]
-        print new_attr1_val
+        print(new_attr1_val)
         new_list[attr1_idx] = new_attr1_val
         new_list[attr2_idx] = new_attr2_val
 
@@ -367,7 +367,7 @@ class CorruptMissingRecord(CorruptRecord):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
         base_kwargs[keyword] = value
 
     base_kwargs['position_function'] = dummy_position
@@ -422,7 +422,7 @@ class CorruptDuplicateRecord(CorruptRecord):
     #
     base_kwargs = {}  # Dictionary, will contain unprocessed arguments
 
-    for (keyword, value) in kwargs.items():
+    for (keyword, value) in list(kwargs.items()):
         base_kwargs[keyword] = value
 
     base_kwargs['position_function'] = dummy_position

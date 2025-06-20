@@ -239,14 +239,14 @@ assert len(rec_dict) == num_org_rec  # Check the number of generated records
 
 
 rec_dict = test_data_corruptor.corrupt_records(rec_dict)
-print rec_dict
-print len(rec_dict)
+print(rec_dict)
+print(len(rec_dict))
 assert len(rec_dict) == num_org_rec+num_dup_rec # Check total number of records
 
 #Inject any CSV Here (rec_dict is the dataset handler)
 #Records must have the same IDs format [rec-000-org]
 
-rec_id_list = rec_dict.keys()
+rec_id_list = list(rec_dict.keys())
 rec_id_list.sort()
 
 # Convert record dictionary into a list, with record identifier added
@@ -259,7 +259,7 @@ for rec_id in rec_id_list:
     #print this_rec_list
 
 #header_list = [rec_id_attr_name]+rec_dict[rec_id_attr_name]
-print header_list
+print(header_list)
 basefunctions.write_csv_file(output_file_name, unicode_encoding_used, header_list, rec_list)
 
 # Write generate data into a file
