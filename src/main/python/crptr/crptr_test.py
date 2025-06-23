@@ -18,12 +18,16 @@
 #
 import random
 
-import basefunctions  # Helper functions
-import corruptrecord # Main classes to corrupt whole records
-import corruptvalue # Main classes to corrupt attribute values of records
-import crptr
-import positionfunctions
-from EG_SKYE_Corruptor import Utils
+import crptr.base_functions as base_functions  # Helper functions
+from crptr.corrupt_data_set import CorruptDataSet
+from crptr.corrupt_records.corrupt_clear_record import CorruptClearRecord
+from crptr.corrupt_records.corrupt_duplicate_record import CorruptDuplicateRecord
+from crptr.corrupt_records.corrupt_missing_record import CorruptMissingRecord
+from crptr.corrupt_records.corrupt_overflow_attributes import CorruptOverflowAttributes
+from crptr.corrupt_records.corrupt_swap_attributes import CorruptSwapAttributes
+import crptr.corrupt_value as corrupt_value # Main classes to corrupt attribute values of records
+import crptr.position_functions as position_functions
+from crptr.synthetic_populations import utils
 
 # read in source file
 
@@ -32,13 +36,13 @@ outputFile = "output-files/birth-30-out.csv"
 tempFile = "temp.csv"
 
 # handle commas
-Utils.removeCommas(inputFile, tempFile)
+utils.removeCommas(inputFile, tempFile)
 
 # add crptr ids
-Utils.addCryptIDs(tempFile, tempFile)
+utils.addCryptIDs(tempFile, tempFile)
 
 # read in source file
-rec_dict = Utils.readInFile(tempFile)
+rec_dict = utils.readInFile(tempFile)
 
 random.seed(42)
 
@@ -80,7 +84,7 @@ num_modification_per_record = 1
 
 # Check if the given the unicode encoding selected is valid.
 #
-basefunctions.check_unicode_encoding_exists(unicode_encoding_used)
+base_functions.check_unicode_encoding_exists(unicode_encoding_used)
 
 
 # -----------------------------------------------------------------------------
@@ -99,76 +103,76 @@ attr_name_list = ['crptr-record',
 # For a value edit corruptor, the sum or the four probabilities given must
 # be 1.0.
 #
-edit_corruptor = corruptvalue.CorruptValueEdit(
-    position_function = positionfunctions.position_mod_normal,
-    char_set_funct = basefunctions.char_set_ascii,
+edit_corruptor = corrupt_value.CorruptValueEdit(
+    position_function = position_functions.position_mod_normal,
+    char_set_funct = base_functions.char_set_ascii,
     insert_prob = 0.5,
     delete_prob = 0.5,
     substitute_prob = 0.0,
     transpose_prob = 0.0
 )
 
-edit_corruptor2 = corruptvalue.CorruptValueEdit(
-    position_function = positionfunctions.position_mod_normal,
-    char_set_funct = basefunctions.char_set_ascii,
+edit_corruptor2 = corrupt_value.CorruptValueEdit(
+    position_function = position_functions.position_mod_normal,
+    char_set_funct = base_functions.char_set_ascii,
     insert_prob = 0.25,
     delete_prob = 0.25,
     substitute_prob = 0.25,
     transpose_prob = 0.25
 )
 
-surname_misspell_corruptor = corruptvalue.CorruptCategoricalValue(
+surname_misspell_corruptor = corrupt_value.CorruptCategoricalValue(
     lookup_file_name = 'lookup-files/surname-misspell.csv',
     has_header_line = False,
     unicode_encoding = unicode_encoding_used
 )
 
-ocr_corruptor = corruptvalue.CorruptValueOCR(
-    position_function = positionfunctions.position_mod_normal,
+ocr_corruptor = corrupt_value.CorruptValueOCR(
+    position_function = position_functions.position_mod_normal,
     lookup_file_name = 'lookup-files/ocr-variations.csv',
     has_header_line = False,
     unicode_encoding = unicode_encoding_used
 )
 
-keyboard_corruptor = corruptvalue.CorruptValueKeyboard(
-    position_function = positionfunctions.position_mod_normal,
+keyboard_corruptor = corrupt_value.CorruptValueKeyboard(
+    position_function = position_functions.position_mod_normal,
     row_prob = 0.5,
     col_prob = 0.5
 )
 
-phonetic_corruptor = corruptvalue.CorruptValuePhonetic(
+phonetic_corruptor = corrupt_value.CorruptValuePhonetic(
     lookup_file_name = 'lookup-files/phonetic-variations.csv',
     has_header_line = False,
     unicode_encoding = unicode_encoding_used
 )
 
-missing_val_corruptor = corruptvalue.CorruptMissingValue()
+missing_val_corruptor = corrupt_value.CorruptMissingValue()
 
-missing_val_corruptor_missing = corruptvalue.CorruptMissingValue(
+missing_val_corruptor_missing = corrupt_value.CorruptMissingValue(
     missing_val='missing'
 )
 
-given_name_missing_val_corruptor = corruptvalue.CorruptMissingValue(
+given_name_missing_val_corruptor = corrupt_value.CorruptMissingValue(
     missing_value='unknown'
 )
 
 # =====================================================================
 # Attribute level
 # =====================================================================
-given_name_unknown_char = corruptvalue.CorruptUnknownCharacter(
-    position_function=positionfunctions.position_mod_uniform,
+given_name_unknown_char = corrupt_value.CorruptUnknownCharacter(
+    position_function=position_functions.position_mod_uniform,
     unknown_char="?"
 )
 
-last_name_abbr = corruptvalue.CorruptAbbreviatedNameForms(
+last_name_abbr = corrupt_value.CorruptAbbreviatedNameForms(
     num_of_char = 1
 )
 
-gender_categorical_domain = corruptvalue.CorruptCategoricalDomain(
+gender_categorical_domain = corrupt_value.CorruptCategoricalDomain(
     categories_list = ["M", "F"]
 )
 
-date = corruptvalue.CorruptDate(
+date = corrupt_value.CorruptDate(
     date_order = "dd-mm-yyyy",
     separator = "-",
     components_to_modify = ['day', 'month', 'year'],
@@ -178,17 +182,17 @@ date = corruptvalue.CorruptDate(
 # =====================================================================
 # Record level
 # =====================================================================
-clear_rec = corruptrecord.CorruptClearRecord(
+clear_rec = CorruptClearRecord(
     clear_val=' '
 )
 
-swap_attr = corruptrecord.CorruptSwapAttributes(
+swap_attr = CorruptSwapAttributes(
     attr1='FirstName',
     attr2= 'LastName',
     attr_name_list=attr_name_list
 )
 
-over_attr = corruptrecord.CorruptOverflowAttributes(
+over_attr = CorruptOverflowAttributes(
     attr1='FirstName',
     attr2= 'LastName',
     overflow_level = 0.5,
@@ -196,9 +200,9 @@ over_attr = corruptrecord.CorruptOverflowAttributes(
     attr_name_list=attr_name_list
 )
 
-missing_rec = corruptrecord.CorruptMissingRecord()
+missing_rec = CorruptMissingRecord()
 
-duplicate_rec = corruptrecord.CorruptDuplicateRecord()
+duplicate_rec = CorruptDuplicateRecord()
 
 
 
@@ -243,7 +247,7 @@ attr_mod_data_dictionary = {'LastName':[(0.2, edit_corruptor2),
 
 # Nothing to change here - set-up the data set corruption object
 #
-test_data_corruptor = crptr.CorruptDataSet(number_of_org_records = num_org_rec,
+test_data_corruptor = CorruptDataSet(number_of_org_records = num_org_rec,
                                            number_of_mod_records = num_dup_rec,
                                            attribute_name_list = attr_name_list,
                                            max_num_dup_per_rec = max_duplicate_per_record,
@@ -290,7 +294,7 @@ for rec_id in rec_id_list:
 
 # header_list = [rec_id_attr_name]+rec_dict[rec_id_attr_name]
 print(header_list)
-basefunctions.write_csv_file(output_file_name, unicode_encoding_used, header_list, rec_list)
+base_functions.write_csv_file(output_file_name, unicode_encoding_used, header_list, rec_list)
 
 # Write generate data into a file
 #

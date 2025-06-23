@@ -7,9 +7,11 @@
 # This script performs corruption based on a provided config file
 # This script then outputs the corrupted records to new files ready to be used with linkage-java
 
-from . import CorruptorDefinitions
-from . import Utils
-import crptr
+from crptr.crptr import Crptr
+from crptr.synthetic_populations.corruptor_definitions.birth_corruptors import BirthCorruptors
+from crptr.synthetic_populations.corruptor_definitions.death_corruptors import DeathCorruptors
+from crptr.synthetic_populations.corruptor_definitions.marriage_corruptors import MarriageCorruptors
+from . import utils
 import sys
 import csv
 
@@ -22,14 +24,14 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     dataset = list(csv.DictReader(open(inputFile)))
 
     # add crptr ids
-    dataset = Utils.addCryptIDs(dataset)
+    dataset = utils.addCryptIDs(dataset)
 
-    dataset = Utils.convertFromListOfDictsToDictOfLists(dataset)
-    labels = Utils.extractLabels(dataset)
+    dataset = utils.convertFromListOfDictsToDictOfLists(dataset)
+    labels = utils.extractLabels(dataset)
 
-    corruptor = CorruptorDefinitions.BirthCorruptors(labels, lookupFilesDir)
+    corruptor = BirthCorruptors(labels, lookupFilesDir)
 
-    Utils.setDeterminism(deterministic, seed)
+    utils.setDeterminism(deterministic, seed)
 
     # data corruption
     numberOfCorruptibleAttributes = 14
@@ -80,35 +82,35 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
                          (0.2, corruptor.fatherNameSwap),
                          (0.2, corruptor.motherNameSwap)],
 
-        'child\'s forname(s)': corruptor.forenameCorruptionGrouping,
+        'child\'s forname(s)': corruptor.forenameCorruptionGroupingOCR,
 
-        'child\'s surname': corruptor.surnameCorruptionGrouping,
+        'child\'s surname': corruptor.surnameCorruptionGroupingOCR,
 
         'sex': [(0.8, corruptor.sexFlip),
                 (0.05, corruptor.missingValue),
                 (0.1, corruptor.unknownCharacter),
-                (0.05, corruptor.keyboardShift)],
+                (0.05, corruptor.ocr)],
 
-        'father\'s forename': corruptor.forenameCorruptionGrouping,
-        'father\'s surname': corruptor.surnameCorruptionGrouping,
-        'father\'s occupation': corruptor.occupationCorruptionGrouping,
+        'father\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'father\'s surname': corruptor.surnameCorruptionGroupingOCR,
+        'father\'s occupation': corruptor.occupationCorruptionGroupingOCR,
 
-        'mother\'s forename': corruptor.forenameCorruptionGrouping,
-        'mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
-        'mother\'s occupation': corruptor.occupationCorruptionGrouping,
+        'mother\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'mother\'s maiden surname': corruptor.surnameCorruptionGroupingOCR,
+        'mother\'s occupation': corruptor.occupationCorruptionGroupingOCR,
 
-        'day of parents\' marriage': corruptor.splitDateCorruptionGrouping,
-        'month of parents\' marriage': corruptor.splitDateCorruptionGrouping,
-        'year of parents\' marriage': corruptor.splitDateCorruptionGrouping,
+        'day of parents\' marriage': corruptor.splitDateCorruptionGroupingOCR,
+        'month of parents\' marriage': corruptor.splitDateCorruptionGroupingOCR,
+        'year of parents\' marriage': corruptor.splitDateCorruptionGroupingOCR,
 
-        'birth day': corruptor.splitDateCorruptionGrouping,
-        'birth month': corruptor.splitDateCorruptionGrouping,
-        'birth year': corruptor.splitDateCorruptionGrouping,
+        'birth day': corruptor.splitDateCorruptionGroupingOCR,
+        'birth month': corruptor.splitDateCorruptionGroupingOCR,
+        'birth year': corruptor.splitDateCorruptionGroupingOCR,
 
         'illegit': [(1.0, corruptor.missingValue)],
 
-        'address': corruptor.addressCorruptionGrouping,
-        'place of parent\'s marriage': corruptor.addressCorruptionGrouping
+        'address': corruptor.addressCorruptionGroupingOCR,
+        'place of parent\'s marriage': corruptor.addressCorruptionGroupingOCR
 
     }
 
@@ -116,7 +118,7 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
     print("Records to be corrupted: " + str(numberToModify))
 
-    crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
+    crptrInstance = Crptr(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
                                          attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
@@ -131,13 +133,13 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     # end of data corruption
 
     # remove original versions for corrupter records
-    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
+    utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
 
     # remove crptr ids
-    Utils.removeCryptIDs(records, labels)
+    utils.removeCryptIDs(records, labels)
 
     # Output corrupted data
-    Utils.outputDictToCSV(labels, records, outputFile)
+    utils.outputDictToCSV(labels, records, outputFile)
 
     sys.stdout = so
     logOutput.close()
@@ -158,14 +160,14 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     # records = Utils.removeCommas(records)
 
     # add crptr ids
-    records = Utils.addCryptIDs(records)
+    records = utils.addCryptIDs(records)
 
-    records = Utils.convertFromListOfDictsToDictOfLists(records)
-    labels = Utils.extractLabels(records)
+    records = utils.convertFromListOfDictsToDictOfLists(records)
+    labels = utils.extractLabels(records)
 
-    corruptor = CorruptorDefinitions.DeathCorruptors(labels, lookupFilesDir)
+    corruptor = DeathCorruptors(labels, lookupFilesDir)
 
-    Utils.setDeterminism(deterministic, seed)
+    utils.setDeterminism(deterministic, seed)
 
     # data corruption
     numberOfCorruptibleAttributes = 19
@@ -214,61 +216,57 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
                          (0.2, corruptor.fatherNameSwap),
                          (0.2, corruptor.motherNameSwap)],
 
-        'forename(s) of deceased': corruptor.forenameCorruptionGrouping,
+        'forename(s) of deceased': corruptor.forenameCorruptionGroupingOCR,
 
-        'surname of deceased': corruptor.surnameCorruptionGrouping,
+        'surname of deceased': corruptor.surnameCorruptionGroupingOCR,
 
         'marital status': [(0.5, corruptor.marritalStatus),
                            (0.35, corruptor.missingValue),
                            (0.1, corruptor.unknownCharacter),
-                           (0.05, corruptor.keyboardShift)],
+                           (0.05, corruptor.ocr)],
 
-        'occupation': corruptor.occupationCorruptionGrouping,
+        'occupation': corruptor.occupationCorruptionGroupingOCR,
 
         'sex': [(0.8, corruptor.sexFlip),
                 (0.05, corruptor.missingValue),
                 (0.1, corruptor.unknownCharacter),
-                (0.05, corruptor.keyboardShift)],
+                (0.05, corruptor.ocr)],
 
-        'name of spouse': [(0.2, corruptor.generalCharacter),
-                              (0.1, corruptor.keyboardShift),
+        'name of spouse': [(0.3, corruptor.ocr),
                               (0.1, corruptor.unknownCharacter),
                               (0.25, corruptor.missingValue),
                               (0.35, corruptor.phoneticVariation)],
 
-        'spouse\'s occ': corruptor.occupationCorruptionGrouping,
+        'spouse\'s occ': corruptor.occupationCorruptionGroupingOCR,
 
-        'day': corruptor.splitDateCorruptionGrouping,
-        'month': corruptor.splitDateCorruptionGrouping,
-        'year': corruptor.splitDateCorruptionGrouping,
+        'day': corruptor.splitDateCorruptionGroupingOCR,
+        'month': corruptor.splitDateCorruptionGroupingOCR,
+        'year': corruptor.splitDateCorruptionGroupingOCR,
 
-        'age at death': [(0.3, corruptor.keyboardShift),
+        'age at death': [(0.3, corruptor.ocr),
                          (0.3, corruptor.unknownCharacter),
                          (0.4, corruptor.missingValue)],
 
-        'father\'s forename': corruptor.forenameCorruptionGrouping,
-        'father\'s surname': corruptor.surnameCorruptionGrouping,
-        'if father deceased': corruptor.deceasedCorruptionGrouping,
-        'father\'s occupation': corruptor.occupationCorruptionGrouping,
+        'father\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'father\'s surname': corruptor.surnameCorruptionGroupingOCR,
+        'if father deceased': corruptor.deceasedCorruptionGroupingOCR,
+        'father\'s occupation': corruptor.occupationCorruptionGroupingOCR,
 
-        'mother\'s forename': corruptor.forenameCorruptionGrouping,
-        'mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
-        'if mother deceased': corruptor.deceasedCorruptionGrouping,
-        'mother\'s occupation': corruptor.occupationCorruptionGrouping,
+        'mother\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'mother\'s maiden surname': corruptor.surnameCorruptionGroupingOCR,
+        'if mother deceased': corruptor.deceasedCorruptionGroupingOCR,
+        'mother\'s occupation': corruptor.occupationCorruptionGroupingOCR,
 
-        'death code A': [(0.6, corruptor.generalCharacter),
-                           (0.1, corruptor.keyboardShift),
+        'death code A': [(0.7, corruptor.ocr),
                            (0.3, corruptor.missingValue)],
 
-        'death code B': [(0.6, corruptor.generalCharacter),
-                         (0.1, corruptor.keyboardShift),
+        'death code B': [(0.7, corruptor.ocr),
                          (0.3, corruptor.missingValue)],
 
-        'death code C': [(0.6, corruptor.generalCharacter),
-                         (0.1, corruptor.keyboardShift),
+        'death code C': [(0.7, corruptor.ocr),
                          (0.3, corruptor.missingValue)],
 
-        'address': corruptor.addressCorruptionGrouping
+        'address': corruptor.addressCorruptionGroupingOCR
 
     }
 
@@ -276,7 +274,7 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
     print("Records to be corrupted: " + str(numberToModify))
 
-    crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
+    crptrInstance = Crptr(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
                                          attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
@@ -291,13 +289,13 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     # end of data corruption
 
     # remove original versions for corrupter records
-    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
+    utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
 
     # remove crptr ids
-    Utils.removeCryptIDs(records, labels)
+    utils.removeCryptIDs(records, labels)
 
     # Output corrupted data
-    Utils.outputDictToCSV(labels, records, outputFile)
+    utils.outputDictToCSV(labels, records, outputFile)
 
     sys.stdout = so
     logOutput.close()
@@ -317,14 +315,14 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
     # records = Utils.removeCommas(records)
 
     # add crptr ids
-    records = Utils.addCryptIDs(records)
+    records = utils.addCryptIDs(records)
 
-    records = Utils.convertFromListOfDictsToDictOfLists(records)
-    labels = Utils.extractLabels(records)
+    records = utils.convertFromListOfDictsToDictOfLists(records)
+    labels = utils.extractLabels(records)
 
-    corruptor = CorruptorDefinitions.MarriageCorruptors(labels, lookupFilesDir)
+    corruptor = MarriageCorruptors(labels, lookupFilesDir)
 
-    Utils.setDeterminism(deterministic, seed)
+    utils.setDeterminism(deterministic, seed)
 
     # data corruption
     numberOfCorruptibleAttributes = 28
@@ -380,57 +378,56 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
                          (0.15, corruptor.groomMotherNameSwap),
                          (0.15, corruptor.groomFatherNameSwap)],
 
-        'forename of groom': corruptor.forenameCorruptionGrouping,
-        'surname of groom': corruptor.surnameCorruptionGrouping,
-        'occupation of groom': corruptor.forenameCorruptionGrouping,
+        'forename of groom': corruptor.forenameCorruptionGroupingOCR,
+        'surname of groom': corruptor.surnameCorruptionGroupingOCR,
+        'occupation of groom': corruptor.forenameCorruptionGroupingOCR,
+
         'marital status of groom': [(0.5, corruptor.marritalStatus),
-                           (0.35, corruptor.missingValue),
                            (0.1, corruptor.unknownCharacter),
-                           (0.05, corruptor.keyboardShift)],
+                           (0.4, corruptor.ocr)],
 
-        'age of groom': [(0.3, corruptor.keyboardShift),
-                         (0.3, corruptor.unknownCharacter),
-                         (0.4, corruptor.missingValue)],
+        'age of groom': [(0.7, corruptor.ocr),
+                         (0.3, corruptor.unknownCharacter)],
 
-        'address of groom': corruptor.addressCorruptionGrouping,
+        'address of groom': corruptor.addressCorruptionGroupingOCR,
 
-        'forename of bride': corruptor.forenameCorruptionGrouping,
-        'surname of bride': corruptor.surnameCorruptionGrouping,
-        'occupation of bride': corruptor.forenameCorruptionGrouping,
+        'forename of bride': corruptor.forenameCorruptionGroupingOCR,
+        'surname of bride': corruptor.surnameCorruptionGroupingOCR,
+        'occupation of bride': corruptor.forenameCorruptionGroupingOCR,
+
         'marital status of bride': [(0.5, corruptor.marritalStatus),
                                     (0.35, corruptor.missingValue),
                                     (0.1, corruptor.unknownCharacter),
-                                    (0.05, corruptor.keyboardShift)],
+                                    (0.05, corruptor.ocr)],
 
-        'age of bride': [(0.3, corruptor.keyboardShift),
-                         (0.3, corruptor.unknownCharacter),
-                         (0.4, corruptor.missingValue)],
+        'age of bride': [(0.7, corruptor.keyboardShift),
+                         (0.3, corruptor.unknownCharacter)],
 
-        'address of bride': corruptor.addressCorruptionGrouping,
+        'address of bride': corruptor.addressCorruptionGroupingOCR,
 
-        'day': corruptor.splitDateCorruptionGrouping,
-        'month': corruptor.splitDateCorruptionGrouping,
-        'year': corruptor.splitDateCorruptionGrouping,
+        'day': corruptor.splitDateCorruptionGroupingOCR,
+        'month': corruptor.splitDateCorruptionGroupingOCR,
+        'year': corruptor.splitDateCorruptionGroupingOCR,
 
-        'place of marriage': corruptor.addressCorruptionGrouping,
+        'place of marriage': corruptor.addressCorruptionGroupingOCR,
 
-        'groom\'s father\'s forename': corruptor.forenameCorruptionGrouping,
-        'groom\'s father\'s surname': corruptor.surnameCorruptionGrouping,
-        'groom\'s father\'s occupation': corruptor.occupationCorruptionGrouping,
-        'if groom\'s father deceased': corruptor.deceasedCorruptionGrouping,
+        'groom\'s father\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'groom\'s father\'s surname': corruptor.surnameCorruptionGroupingOCR,
+        'groom\'s father\'s occupation': corruptor.occupationCorruptionGroupingOCR,
+        'if groom\'s father deceased': corruptor.deceasedCorruptionGroupingOCR,
 
-        'bride\'s father\'s forename': corruptor.forenameCorruptionGrouping,
-        'bride\'s father\'s surname': corruptor.surnameCorruptionGrouping,
-        'bride\'s father\'s occupation': corruptor.occupationCorruptionGrouping,
-        'if bride\'s father deceased': corruptor.deceasedCorruptionGrouping,
+        'bride\'s father\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'bride\'s father\'s surname': corruptor.surnameCorruptionGroupingOCR,
+        'bride\'s father\'s occupation': corruptor.occupationCorruptionGroupingOCR,
+        'if bride\'s father deceased': corruptor.deceasedCorruptionGroupingOCR,
 
-        'groom\'s mother\'s forename': corruptor.forenameCorruptionGrouping,
-        'groom\'s mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
-        'if groom\'s mother deceased': corruptor.deceasedCorruptionGrouping,
+        'groom\'s mother\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'groom\'s mother\'s maiden surname': corruptor.surnameCorruptionGroupingOCR,
+        'if groom\'s mother deceased': corruptor.deceasedCorruptionGroupingOCR,
 
-        'bride\'s mother\'s forename': corruptor.forenameCorruptionGrouping,
-        'bride\'s mother\'s maiden surname': corruptor.surnameCorruptionGrouping,
-        'if bride\'s mother deceased': corruptor.deceasedCorruptionGrouping
+        'bride\'s mother\'s forename': corruptor.forenameCorruptionGroupingOCR,
+        'bride\'s mother\'s maiden surname': corruptor.surnameCorruptionGroupingOCR,
+        'if bride\'s mother deceased': corruptor.deceasedCorruptionGroupingOCR
 
     }
 
@@ -438,7 +435,7 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
     numberToModify = int(numberOfRecords * proportionOfRecordsToCorrupt)
     print("Records to be corrupted: " + str(numberToModify))
 
-    crptrInstance = crptr.CorruptDataSet(number_of_org_records=numberOfRecords,
+    crptrInstance = Crptr(number_of_org_records=numberOfRecords,
                                          number_of_mod_records=numberToModify,
                                          attribute_name_list=labels,
                                          max_num_dup_per_rec=1,
@@ -453,13 +450,13 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
     # end of data corruption
 
     # remove original versions for corrupter records
-    Utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
+    utils.removeOrigonalRecordsForWhichDuplicateExists(records, labels)
 
     # remove crptr ids
-    Utils.removeCryptIDs(records, labels)
+    utils.removeCryptIDs(records, labels)
 
     # Output corrupted data
-    Utils.outputDictToCSV(labels, records, outputFile)
+    utils.outputDictToCSV(labels, records, outputFile)
 
     sys.stdout = so
     logOutput.close()

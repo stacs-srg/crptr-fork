@@ -14,13 +14,12 @@
 #
 import csv
 import random
-import sys
 
 #import corruptor      # Main classes to corrupt attribute values and records
-import basefunctions  # Helper functions
-import positionfunctions
-import crptr
-import corruptvalue
+import crptr.base_functions as base_functions  # Helper functions
+from crptr.corrupt_data_set import CorruptDataSet
+import crptr.position_functions as position_functions
+import crptr.corrupt_value as corrupt_value
 
 
 #read source file and handle it in rec_dict = {}
@@ -86,7 +85,7 @@ num_modification_per_record = 1
 
 # Check if the given the unicode encoding selected is valid.
 #
-basefunctions.check_unicode_encoding_exists(unicode_encoding_used)
+base_functions.check_unicode_encoding_exists(unicode_encoding_used)
 
 # -----------------------------------------------------------------------------
 # Define how the generated records are to be corrupted (using methods from
@@ -96,64 +95,64 @@ basefunctions.check_unicode_encoding_exists(unicode_encoding_used)
 # be 1.0.
 #
 edit_corruptor = \
-    corruptvalue.CorruptValueEdit(\
-          position_function = positionfunctions.position_mod_normal,
-          char_set_funct = basefunctions.char_set_ascii,
+    corrupt_value.CorruptValueEdit(\
+          position_function = position_functions.position_mod_normal,
+          char_set_funct = base_functions.char_set_ascii,
           insert_prob = 0.5,
           delete_prob = 0.5,
           substitute_prob = 0.0,
           transpose_prob = 0.0)
 
 edit_corruptor2 = \
-    corruptvalue.CorruptValueEdit(\
-          position_function = positionfunctions.position_mod_normal,
-          char_set_funct = basefunctions.char_set_ascii,
+    corrupt_value.CorruptValueEdit(\
+          position_function = position_functions.position_mod_normal,
+          char_set_funct = base_functions.char_set_ascii,
           insert_prob = 0.25,
           delete_prob = 0.25,
           substitute_prob = 0.25,
           transpose_prob = 0.25)
 
 surname_misspell_corruptor = \
-    corruptvalue.CorruptCategoricalValue(\
+    corrupt_value.CorruptCategoricalValue(\
           lookup_file_name = 'lookup-files/surname-misspell.csv',
           has_header_line = False,
           unicode_encoding = unicode_encoding_used)
 
-ocr_corruptor = corruptvalue.CorruptValueOCR(\
-          position_function = positionfunctions.position_mod_normal,
+ocr_corruptor = corrupt_value.CorruptValueOCR(\
+          position_function = position_functions.position_mod_normal,
           lookup_file_name = 'lookup-files/ocr-variations.csv',
           has_header_line = False,
           unicode_encoding = unicode_encoding_used)
 
-keyboard_corruptor = corruptvalue.CorruptValueKeyboard(\
-          position_function = positionfunctions.position_mod_normal,
+keyboard_corruptor = corrupt_value.CorruptValueKeyboard(\
+          position_function = position_functions.position_mod_normal,
           row_prob = 0.5,
           col_prob = 0.5)
 
-phonetic_corruptor = corruptvalue.CorruptValuePhonetic(\
+phonetic_corruptor = corrupt_value.CorruptValuePhonetic(\
           lookup_file_name = 'lookup-files/phonetic-variations.csv',
           has_header_line = False,
           unicode_encoding = unicode_encoding_used)
 
-missing_val_corruptor = corruptvalue.CorruptMissingValue()
+missing_val_corruptor = corrupt_value.CorruptMissingValue()
 
-missing_val_corruptor_missing = corruptvalue.CorruptMissingValue(\
+missing_val_corruptor_missing = corrupt_value.CorruptMissingValue(\
        missing_val='missing')
 
-given_name_missing_val_corruptor = corruptvalue.CorruptMissingValue(\
+given_name_missing_val_corruptor = corrupt_value.CorruptMissingValue(\
        missing_value='unknown')
 #NEW TESTS
-given_name_unknown_char = corruptvalue.CorruptUnknownCharacter(\
-    position_function=positionfunctions.position_mod_uniform,
+given_name_unknown_char = corrupt_value.CorruptUnknownCharacter(\
+    position_function=position_functions.position_mod_uniform,
     unknown_char="?")
 
-last_name_abbr = corruptvalue.CorruptAbbreviatedNameForms(\
+last_name_abbr = corrupt_value.CorruptAbbreviatedNameForms(\
     num_of_char = 1)
-gender_categorical_domain = corruptvalue.CorruptCategoricalDomain(\
+gender_categorical_domain = corrupt_value.CorruptCategoricalDomain(\
     categories_list = ["M", "F"])
 
 date = \
-    corruptvalue.CorruptDate(\
+    corrupt_value.CorruptDate(\
         date_order = "dd-mm-yyyy",
         separator = "-",
         components_to_modify = ['day', 'month', 'year'],
@@ -209,7 +208,7 @@ attr_mod_data_dictionary = {'LastName':[(0.2, edit_corruptor2),
 
 # Nothing to change here - set-up the data set corruption object
 #
-test_data_corruptor = crptr.CorruptDataSet(number_of_org_records = \
+test_data_corruptor = CorruptDataSet(number_of_org_records = \
                                           num_org_rec,
                                           number_of_mod_records = num_dup_rec,
                                           attribute_name_list = attr_name_list,
@@ -260,7 +259,7 @@ for rec_id in rec_id_list:
 
 #header_list = [rec_id_attr_name]+rec_dict[rec_id_attr_name]
 print(header_list)
-basefunctions.write_csv_file(output_file_name, unicode_encoding_used, header_list, rec_list)
+base_functions.write_csv_file(output_file_name, unicode_encoding_used, header_list, rec_list)
 
 # Write generate data into a file
 #

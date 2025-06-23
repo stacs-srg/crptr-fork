@@ -1,10 +1,9 @@
 # -----------------------------------------------------------------------------
 # Import necessary modules
 
-import math
 import random
-import basefunctions
-import positionfunctions
+import crptr.base_functions as base_functions
+
 # =============================================================================
 # Classes for corrupting a value in a single attribute (field) of the data set
 # =============================================================================
@@ -45,7 +44,7 @@ class CorruptValue:
 #AHMAD#This is checking from calls in generate-data-english.py file
 #AHMAD# 'position' realted to the inserted argument in the file config and same to others
       if (keyword.startswith('position')):
-        basefunctions.check_is_function_or_method('position_function', value)
+        base_functions.check_is_function_or_method('position_function', value)
         #AHMAD# setting position to the given value in the file
         #-----# in this case one of the functions (position_mod_normal or position_mod_uniform)
         self.position_function = value
@@ -54,7 +53,7 @@ class CorruptValue:
         raise Exception('Illegal constructor argument keyword: "%s"' % \
               (str(keyword)))
 
-    basefunctions.check_is_function_or_method('position_function',
+    base_functions.check_is_function_or_method('position_function',
                                               self.position_function)
 
     # Check if the position function does return an integer value
@@ -112,7 +111,7 @@ class CorruptMissingValue(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('miss')):
-        basefunctions.check_is_string('missing_val', value)
+        base_functions.check_is_string('missing_val', value)
         self.missing_val = value
 
       else:
@@ -172,23 +171,23 @@ class CorruptValueEdit(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('char')):
-        basefunctions.check_is_function_or_method('char_set_funct', value)
+        base_functions.check_is_function_or_method('char_set_funct', value)
         self.char_set_funct = value
 
       elif (keyword.startswith('ins')):
-        basefunctions.check_is_normalised('insert_prob', value)
+        base_functions.check_is_normalised('insert_prob', value)
         self.insert_prob = value
 
       elif (keyword.startswith('del')):
-        basefunctions.check_is_normalised('delete_prob', value)
+        base_functions.check_is_normalised('delete_prob', value)
         self.delete_prob = value
 
       elif (keyword.startswith('sub')):
-        basefunctions.check_is_normalised('substitute_prob', value)
+        base_functions.check_is_normalised('substitute_prob', value)
         self.substitute_prob = value
 
       elif (keyword.startswith('tran')):
-        basefunctions.check_is_normalised('transpose_prob', value)
+        base_functions.check_is_normalised('transpose_prob', value)
         self.transpose_prob = value
 
       else:
@@ -198,17 +197,17 @@ class CorruptValueEdit(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_function_or_method('char_set_funct',
+    base_functions.check_is_function_or_method('char_set_funct',
                                               self.char_set_funct)
-    basefunctions.check_is_normalised('insert_prob',     self.insert_prob)
-    basefunctions.check_is_normalised('delete_prob',     self.delete_prob)
-    basefunctions.check_is_normalised('substitute_prob', self.substitute_prob)
-    basefunctions.check_is_normalised('transpose_prob',  self.transpose_prob)
+    base_functions.check_is_normalised('insert_prob',     self.insert_prob)
+    base_functions.check_is_normalised('delete_prob',     self.delete_prob)
+    base_functions.check_is_normalised('substitute_prob', self.substitute_prob)
+    base_functions.check_is_normalised('transpose_prob',  self.transpose_prob)
 
     # Check if the character set function returns a string
     #
     test_str = self.char_set_funct('test')   # This might become a problem
-    basefunctions.check_is_string_or_unicode_string('test_str', test_str)
+    base_functions.check_is_string_or_unicode_string('test_str', test_str)
 
     if (abs((self.insert_prob + self.delete_prob + self.substitute_prob + \
          self.transpose_prob) - 1.0) > 0.0000001):
@@ -352,11 +351,11 @@ class CorruptValueKeyboard(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('row')):
-        basefunctions.check_is_normalised('row_prob', value)
+        base_functions.check_is_normalised('row_prob', value)
         self.row_prob = value
 
       elif (keyword.startswith('col')):
-        basefunctions.check_is_normalised('col_prob', value)
+        base_functions.check_is_normalised('col_prob', value)
         self.col_prob = value
 
       else:
@@ -366,8 +365,8 @@ class CorruptValueKeyboard(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_normalised('row_prob', self.row_prob)
-    basefunctions.check_is_normalised('col_prob', self.col_prob)
+    base_functions.check_is_normalised('row_prob', self.row_prob)
+    base_functions.check_is_normalised('col_prob', self.col_prob)
 
     if (abs((self.row_prob + self.col_prob) - 1.0) > 0.0000001):
       raise Exception('Sum of row and column probablities does not sum ' + \
@@ -506,15 +505,15 @@ class CorruptValueOCR(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
-        basefunctions.check_is_non_empty_string('lookup_file_name', value)
+        base_functions.check_is_non_empty_string('lookup_file_name', value)
         self.lookup_file_name = value
 
       elif (keyword.startswith('has')):
-        basefunctions.check_is_flag('has_header_line', value)
+        base_functions.check_is_flag('has_header_line', value)
         self.has_header_line = value
 
       elif (keyword.startswith('unicode')):
-        basefunctions.check_is_non_empty_string('unicode_encoding', value)
+        base_functions.check_is_non_empty_string('unicode_encoding', value)
         self.unicode_encoding = value
 
       else:
@@ -524,16 +523,16 @@ class CorruptValueOCR(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_non_empty_string('lookup_file_name',
+    base_functions.check_is_non_empty_string('lookup_file_name',
                                             self.lookup_file_name)
-    basefunctions.check_is_flag('has_header_line', self.has_header_line)
-    basefunctions.check_is_non_empty_string('unicode_encoding',
+    base_functions.check_is_flag('has_header_line', self.has_header_line)
+    base_functions.check_is_non_empty_string('unicode_encoding',
                                             self.unicode_encoding)
 
     # Load the OCR variations lookup file - - - - - - - - - - - - - - - - - - -
     #
     header_list, lookup_file_data = \
-                     basefunctions.read_csv_file(self.lookup_file_name,
+                     base_functions.read_csv_file(self.lookup_file_name,
                                                  self.unicode_encoding,
                                                  self.has_header_line)
 
@@ -699,15 +698,15 @@ class CorruptValuePhonetic(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
-        basefunctions.check_is_non_empty_string('lookup_file_name', value)
+        base_functions.check_is_non_empty_string('lookup_file_name', value)
         self.lookup_file_name = value
 
       elif (keyword.startswith('has')):
-        basefunctions.check_is_flag('has_header_line', value)
+        base_functions.check_is_flag('has_header_line', value)
         self.has_header_line = value
 
       elif (keyword.startswith('unicode')):
-        basefunctions.check_is_non_empty_string('unicode_encoding', value)
+        base_functions.check_is_non_empty_string('unicode_encoding', value)
         self.unicode_encoding = value
 
       else:
@@ -719,16 +718,16 @@ class CorruptValuePhonetic(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_non_empty_string('lookup_file_name',
+    base_functions.check_is_non_empty_string('lookup_file_name',
                                             self.lookup_file_name)
-    basefunctions.check_is_flag('has_header_line', self.has_header_line)
-    basefunctions.check_is_non_empty_string('unicode_encoding',
+    base_functions.check_is_flag('has_header_line', self.has_header_line)
+    base_functions.check_is_non_empty_string('unicode_encoding',
                                             self.unicode_encoding)
 
     # Load the misspelling lookup file - - - - - - - - - - - - - - - - - - - - -
     #
     header_list, lookup_file_data = \
-                     basefunctions.read_csv_file(self.lookup_file_name,
+                     base_functions.read_csv_file(self.lookup_file_name,
                                                  self.unicode_encoding,
                                                  self.has_header_line)
 
@@ -780,7 +779,7 @@ class CorruptValuePhonetic(CorruptValue):
                  work_str[org_pat_start+org_pat_length:]
 
     if (work_str == tmp_str):
-      work_str = str_to_change
+      work_str = in_str
 
     return work_str
 
@@ -1209,15 +1208,15 @@ class CorruptCategoricalValue(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('look')):
-        basefunctions.check_is_non_empty_string('lookup_file_name', value)
+        base_functions.check_is_non_empty_string('lookup_file_name', value)
         self.lookup_file_name = value
 
       elif (keyword.startswith('has')):
-        basefunctions.check_is_flag('has_header_line', value)
+        base_functions.check_is_flag('has_header_line', value)
         self.has_header_line = value
 
       elif (keyword.startswith('unicode')):
-        basefunctions.check_is_non_empty_string('unicode_encoding', value)
+        base_functions.check_is_non_empty_string('unicode_encoding', value)
         self.unicode_encoding = value
 
       else:
@@ -1229,16 +1228,16 @@ class CorruptCategoricalValue(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_non_empty_string('lookup_file_name',
+    base_functions.check_is_non_empty_string('lookup_file_name',
                                             self.lookup_file_name)
-    basefunctions.check_is_flag('has_header_line', self.has_header_line)
-    basefunctions.check_is_non_empty_string('unicode_encoding',
+    base_functions.check_is_flag('has_header_line', self.has_header_line)
+    base_functions.check_is_non_empty_string('unicode_encoding',
                                             self.unicode_encoding)
 
     # Load the misspelling lookup file - - - - - - - - - - - - - - - - - - - - -
     #
     header_list, lookup_file_data = \
-                     basefunctions.read_csv_file(self.lookup_file_name,
+                     base_functions.read_csv_file(self.lookup_file_name,
                                                  self.unicode_encoding,
                                                  self.has_header_line)
 
@@ -1308,7 +1307,7 @@ class CorruptUnknownCharacter(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('unknown')):
-        basefunctions.check_is_string('unknown_char', value)
+        base_functions.check_is_string('unknown_char', value)
         self.unknown_char = value
 
       else:
@@ -1318,7 +1317,7 @@ class CorruptUnknownCharacter(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_string('unknown_char',
+    base_functions.check_is_string('unknown_char',
                                               self.unknown_char)
   def corrupt_value(self, in_str):
     """Method which corrupts the given input string and returns the modified
@@ -1353,7 +1352,7 @@ class CorruptAbbreviatedNameForms(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('num')):
-        basefunctions.check_is_integer('num_of_char', value)
+        base_functions.check_is_integer('num_of_char', value)
         self.num_of_char = value
       else:
         base_kwargs[keyword] = value
@@ -1362,7 +1361,7 @@ class CorruptAbbreviatedNameForms(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_integer('num_of_char',
+    base_functions.check_is_integer('num_of_char',
                                               self.num_of_char)
   def corrupt_value(self, in_str):
     """Method which corrupts the given input string and returns the modified
@@ -1398,7 +1397,7 @@ class CorruptCategoricalDomain(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('categories')):
-        basefunctions.check_is_list('categories_list', value)
+        base_functions.check_is_list('categories_list', value)
         self.categories_list = value
       else:
         base_kwargs[keyword] = value
@@ -1408,7 +1407,7 @@ class CorruptCategoricalDomain(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_list('categories_list',
+    base_functions.check_is_list('categories_list',
                                               self.categories_list)
   def corrupt_value(self, in_str):
     """Method which corrupts the given input string and returns the modified
@@ -1453,19 +1452,19 @@ class CorruptDate(CorruptValue):
     for (keyword, value) in list(kwargs.items()):
 
       if (keyword.startswith('date_ord')):
-        basefunctions.check_date_order('date_order', value)
+        base_functions.check_date_order('date_order', value)
         self.date_order = value
 
       elif (keyword.startswith('separator')):
-        basefunctions.check_date_separator('separator', value)
+        base_functions.check_date_separator('separator', value)
         self.separator = value
 
       elif (keyword.startswith('components')):
-        basefunctions.check_date_components_to_modify('components_to_modify', value)
+        base_functions.check_date_components_to_modify('components_to_modify', value)
         self.components_to_modify = value
 
       elif (keyword.startswith('date_corruption')):
-        basefunctions.check_date_modification_methods('date_corruption_methods', value)
+        base_functions.check_date_modification_methods('date_corruption_methods', value)
         self.date_corruption_methods = value
 
       else:
@@ -1476,13 +1475,13 @@ class CorruptDate(CorruptValue):
 
     # Check if the necessary variables have been set
     #
-    basefunctions.check_is_non_empty_string('date_order',
+    base_functions.check_is_non_empty_string('date_order',
                                               self.date_order)
-    basefunctions.check_is_non_empty_string('separator',
+    base_functions.check_is_non_empty_string('separator',
                                 self.separator)
-    basefunctions.check_is_list('components_to_modify',
+    base_functions.check_is_list('components_to_modify',
                                 self.components_to_modify)
-    basefunctions.check_is_list('date_corruption_methods',
+    base_functions.check_is_list('date_corruption_methods',
                                 self.date_corruption_methods)
 
   def corrupt_value(self, in_str):
@@ -1650,7 +1649,7 @@ class CorruptDate(CorruptValue):
       comp_mod = "month"
 
       try:
-        basefunctions.check_is_integer('month', month)
+        base_functions.check_is_integer('month', month)
       except Exception:
         return in_str  # i.e. previous corruption prevents this corruption
 
