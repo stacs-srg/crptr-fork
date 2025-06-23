@@ -1,17 +1,17 @@
 from crptr.corrupt_records.corrupt_swap_attributes import CorruptSwapAttributes
-from crptr.synthetic_populations.corruptor_definitions.base import Corruptors
+from crptr.synthetic_populations.corruptor_definitions.base import Corruptor
 
 
-class MarriageCorruptors(Corruptors):
+class MarriageCorruptorTD(Corruptor):
 
     def __init__(self, labels, lookupFilesDir, encoding = 'UTF-8'):
         self.columnLabels = labels
-        Corruptors.__init__(self, lookupFilesDir, encoding)
+        Corruptor.__init__(self, lookupFilesDir, encoding)
 
 
     def setup(self):
 
-        Corruptors.setup(self)
+        Corruptor.setup(self)
 
         self.dayMonthSwapDeath = CorruptSwapAttributes(
             attr1='day',

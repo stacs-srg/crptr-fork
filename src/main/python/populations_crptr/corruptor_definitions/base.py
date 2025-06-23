@@ -4,7 +4,7 @@ import crptr.base_functions as base_functions  # Helper functions
 import crptr.position_functions as position_functions
 
 
-class Corruptors:
+class Corruptor:
     def __init__(self, lookupFilesDir, encoding = 'UTF-8'):
         self.encoding = encoding
         self.lookupFilesDir = lookupFilesDir
