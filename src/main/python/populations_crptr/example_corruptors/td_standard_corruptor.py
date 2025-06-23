@@ -2,10 +2,8 @@
 # Author: Tom Dalton (tsd4@st-andrews.ac.uk)
 # 5/6/2018
 #
-# This script reads in files in the format provided by Eilidh Garrett for the Skye data
-# ValiPop outputs population records in this form when config includes: output_record_format = EG_SKYE
-# This script performs corruption based on a provided config file
-# This script then outputs the corrupted records to new files ready to be used with linkage-java
+# This script reads in files in the format created by Tom Dalton
+# ValiPop outputs population records in this form when config includes: output_record_format = TD
 
 from crptr.crptr import Crptr
 from crptr.synthetic_populations.corruptor_definitions.birth_corruptors import BirthCorruptors
