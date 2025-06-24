@@ -3,3 +3,4 @@ syntax: glob
 **/*.py.bak
 __pycache__
 results
+venv
