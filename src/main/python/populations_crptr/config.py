@@ -12,7 +12,7 @@ import populations_crptr.example_corruptors.ocr_corruptors_td as OcrCorruptorsTD
 
 
 class Config:
-    CORRUPTION_PROFILE = CorruptionProfileA
+    PROFILE = CorruptionProfileA
     CORRUPTORS = StandardCorruptorsTD
     OUTPUT_DIR = "results"
     PURPOSE = "default"

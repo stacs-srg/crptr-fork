@@ -6,11 +6,10 @@
 # ValiPop outputs population records in this form when config includes: output_record_format = TD
 
 from crptr.crptr import Crptr
-from populations_crptr.corruptor_definitions.birth_corruptors import BirthCorruptors
-from populations_crptr.corruptor_definitions.death_corruptors import DeathCorruptors
-from populations_crptr.corruptor_definitions.marriage_corruptors import MarriageCorruptors
-from . import utils
-import sys
+from populations_crptr.corruptor_definitions.birth_corruptor_td import BirthCorruptorTD
+from populations_crptr.corruptor_definitions.death_corruptor_td import DeathCorruptorTD
+from populations_crptr.corruptor_definitions.marriage_corruptor_td import MarriageCorruptorTD
+from populations_crptr import utils
 import csv
 
 def birthCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
@@ -25,7 +24,7 @@ def birthCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, p
     dataset = utils.convertFromListOfDictsToDictOfLists(dataset)
     labels = utils.extractLabels(dataset)
 
-    corruptor = BirthCorruptors(labels, lookupFilesDir)
+    corruptor = BirthCorruptorTD(labels, lookupFilesDir)
 
     utils.setDeterminism(deterministic, seed)
 
@@ -158,7 +157,7 @@ def deathCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, p
     records = utils.convertFromListOfDictsToDictOfLists(records)
     labels = utils.extractLabels(records)
 
-    corruptor = DeathCorruptors(labels, lookupFilesDir)
+    corruptor = DeathCorruptorTD(labels, lookupFilesDir)
 
     utils.setDeterminism(deterministic, seed)
 
@@ -314,7 +313,7 @@ def marriageCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed
     records = utils.convertFromListOfDictsToDictOfLists(records)
     labels = utils.extractLabels(records)
 
-    corruptor = MarriageCorruptors(labels, lookupFilesDir)
+    corruptor = MarriageCorruptorTD(labels, lookupFilesDir)
 
     utils.setDeterminism(deterministic, seed)
 

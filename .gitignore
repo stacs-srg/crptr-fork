@@ -4,3 +4,5 @@ syntax: glob
 __pycache__
 results
 venv
+build
+**/*.egg-info

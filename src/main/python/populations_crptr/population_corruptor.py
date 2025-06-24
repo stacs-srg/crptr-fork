@@ -6,10 +6,10 @@
 # "marriage_records", "death_records") in TD format and outputs a corrupt
 # version of the records.
 
-import datetime
+from datetime import datetime
 import os
 import sys
-from config import Config
+from populations_crptr.config import Config
 
 def main(filepath):
     # Check input directory exists and is a directory
@@ -26,14 +26,14 @@ def main(filepath):
     # Generate output directory
     now = datetime.now()
     timestamp_str = now.strftime("%Y-%m-%dT%H-%M-%S") + f"-{now.microsecond // 1000:03d}"
-    output_filepath = Config.RESULTS_DIR + Config.PURPOSE + timestamp_str
+    output_filepath = Config.OUTPUT_DIR + "/"+ Config.PURPOSE + "/" + timestamp_str
     os.makedirs(output_filepath+"/records", exist_ok=True)
 
     # Corrupts files
     files = ["birth_records.csv", "marriage_records.csv", "death_records.csv"]
-    corrupt_file(filepath, output_filepath, files[0], Config.Corruptors.birthCorruptor)
-    corrupt_file(filepath, output_filepath, files[1], Config.Corruptors.marriageCorruptor)
-    corrupt_file(filepath, output_filepath, files[2], Config.Corruptors.deathCorruptor)
+    corrupt_file(filepath, output_filepath, files[0], Config.CORRUPTORS.birthCorruptor)
+    corrupt_file(filepath, output_filepath, files[1], Config.CORRUPTORS.marriageCorruptor)
+    corrupt_file(filepath, output_filepath, files[2], Config.CORRUPTORS.deathCorruptor)
 
     print(f"Results output to {output_filepath}")
 
