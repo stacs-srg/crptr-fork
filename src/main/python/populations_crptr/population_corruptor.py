@@ -68,7 +68,13 @@ def print_timestamp(string):
     print(string)
 
 def print_time_elapsed(start_time):
-    print(f"Elapsed time: {(datetime.now() - start_time).strftime("%H-%M-%S")}")
+    elapsed = datetime.now() - start_time
+
+    hours, remainder = divmod(elapsed.total_seconds(), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    milliseconds = elapsed.microseconds // 1000
+
+    print(f"Elapsed time: {int(hours):02}-{int(minutes):02}-{int(seconds):02}-{milliseconds:03}")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
