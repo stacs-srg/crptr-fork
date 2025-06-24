@@ -11,10 +11,15 @@ from populations_crptr.corruptor_definitions.death_corruptor_td import DeathCorr
 from populations_crptr.corruptor_definitions.marriage_corruptor_td import MarriageCorruptorTD
 from populations_crptr import utils
 import csv
+import sys
 
-def birthCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-
+    
+    # Set stdout to logfile
+    so = sys.stdout
+    logOutput = open(logFile, 'w')
+    sys.stdout = logOutput
 
     dataset = list(csv.DictReader(open(inputFile)))
 
@@ -136,13 +141,20 @@ def birthCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, p
     # Output corrupted data
     utils.outputDictToCSV(labels, records, outputFile)
 
+    # Reset stdout
+    sys.stdout = so
+    logOutput.close()
 
 
 
 
-def deathCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-
+    
+    # Set stdout to logfile
+    so = sys.stdout
+    logOutput = open(logFile, 'w')
+    sys.stdout = logOutput
 
     # records = Utils.readInFile(inputFile)
 
@@ -292,9 +304,13 @@ def deathCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, p
 
 
 
-def marriageCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-
+    
+    # Set stdout to logfile
+    so = sys.stdout
+    logOutput = open(logFile, 'w')
+    sys.stdout = logOutput
 
     # records = Utils.readInFile(inputFile)
 

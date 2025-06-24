@@ -25,23 +25,25 @@ def main(filepath):
 
     # Generate output directory
     now = datetime.now()
-    timestamp_str = now.strftime("%Y-%m-%dT%H-%M-%S") + f"-{now.microsecond // 1000:03d}"
-    output_filepath = Config.OUTPUT_DIR + "/"+ Config.PURPOSE + "/" + timestamp_str
-    os.makedirs(output_filepath+"/records", exist_ok=True)
+    timestamp_str = f"{now.strftime('%Y-%m-%dT%H-%M-%S')}-{now.microsecond // 1000:03d}"
+    output_filepath = f"{Config.OUTPUT_DIR}/{Config.PURPOSE}/{timestamp_str}"
+    os.makedirs(f"{output_filepath}/records", exist_ok=True)
 
+    # Generate logfile path
+    log_filepath = f"{output_filepath}/{Config.PURPOSE}{timestamp_str}.log"
     # Corrupts files
     files = ["birth_records.csv", "marriage_records.csv", "death_records.csv"]
-    corrupt_file(filepath, output_filepath, files[0], Config.CORRUPTORS.birthCorruptor)
-    corrupt_file(filepath, output_filepath, files[1], Config.CORRUPTORS.marriageCorruptor)
-    corrupt_file(filepath, output_filepath, files[2], Config.CORRUPTORS.deathCorruptor)
+    corrupt_file(filepath, output_filepath, files[0], log_filepath, Config.CORRUPTORS.birthCorruptor)
+    corrupt_file(filepath, output_filepath, files[1], log_filepath, Config.CORRUPTORS.marriageCorruptor)
+    corrupt_file(filepath, output_filepath, files[2], log_filepath, Config.CORRUPTORS.deathCorruptor)
 
     print(f"Results output to {output_filepath}")
 
-def corrupt_file(input_dir, output_dir, filename, corruptor_fn):
+def corrupt_file(input_dir, output_dir, filename, log_filepath, corruptor_fn):
     start_time = datetime.now()
 
     # Checks input file exists
-    input_filepath = input_dir + "/" + filename
+    input_filepath = f"{input_dir}/{filename}"
     if not os.path.exists(input_filepath):
         print (f"Skipping, file not found: {input_filepath}")
         return
@@ -50,7 +52,8 @@ def corrupt_file(input_dir, output_dir, filename, corruptor_fn):
 
     corruptor_fn(
         input_filepath,
-        output_dir+"/records/"+filename,
+        f"{output_dir}/records/{filename}",
+        log_filepath,
         Config.LOOKUP_FILES_DIR,
         Config.DETERMINISTIC,
         Config.SEED,
@@ -64,7 +67,7 @@ def corrupt_file(input_dir, output_dir, filename, corruptor_fn):
 
 def print_timestamp(string):
     now = datetime.now()
-    print(now.strftime("%Y/%m/%d %H-%M-%S") + f".{now.microsecond // 1000:03d} :: ", end="")
+    print(f"{now.strftime('%Y/%m/%d %H-%M-%S')}.{now.microsecond // 1000:03d} :: ", end="")
     print(string)
 
 def print_time_elapsed(start_time):
