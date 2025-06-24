@@ -6,18 +6,16 @@
 # ValiPop outputs population records in this form when config includes: output_record_format = TD
 
 from crptr.crptr import Crptr
-from crptr.synthetic_populations.corruptor_definitions.birth_corruptors import BirthCorruptors
-from crptr.synthetic_populations.corruptor_definitions.death_corruptors import DeathCorruptors
-from crptr.synthetic_populations.corruptor_definitions.marriage_corruptors import MarriageCorruptors
+from populations_crptr.corruptor_definitions.birth_corruptors import BirthCorruptors
+from populations_crptr.corruptor_definitions.death_corruptors import DeathCorruptors
+from populations_crptr.corruptor_definitions.marriage_corruptors import MarriageCorruptors
 from . import utils
 import sys
 import csv
 
-def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+def birthCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-    so = sys.stdout
-    logOutput = open(logFile, 'w')
-    sys.stdout = logOutput
+    
 
     dataset = list(csv.DictReader(open(inputFile)))
 
@@ -139,16 +137,13 @@ def birthCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     # Output corrupted data
     utils.outputDictToCSV(labels, records, outputFile)
 
-    sys.stdout = so
-    logOutput.close()
 
 
 
-def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+
+def deathCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-    so = sys.stdout
-    logOutput = open(logFile, 'w')
-    sys.stdout = logOutput
+    
 
     # records = Utils.readInFile(inputFile)
 
@@ -299,15 +294,12 @@ def deathCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic
     # Output corrupted data
     utils.outputDictToCSV(labels, records, outputFile)
 
-    sys.stdout = so
-    logOutput.close()
 
 
-def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
+
+def marriageCorruptor(inputFile, outputFile, lookupFilesDir, deterministic, seed, proportionOfRecordsToCorrupt,
                    maxModificationsPerAttribute, numberOfModificationsPerRecord, recordLevelProportion):
-    so = sys.stdout
-    logOutput = open(logFile, 'w')
-    sys.stdout = logOutput
+    
 
     # records = Utils.readInFile(inputFile)
 
@@ -461,5 +453,3 @@ def marriageCorruptor(inputFile, outputFile, logFile, lookupFilesDir, determinis
     # Output corrupted data
     utils.outputDictToCSV(labels, records, outputFile)
 
-    sys.stdout = so
-    logOutput.close()

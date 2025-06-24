@@ -1,5 +1,5 @@
 from crptr.corrupt_records.corrupt_swap_attributes import CorruptSwapAttributes
-from crptr.synthetic_populations.corruptor_definitions.base import Corruptor
+from populations_crptr.corruptor_definitions.base import Corruptor
 
 class BirthCorruptorTD(Corruptor):
 

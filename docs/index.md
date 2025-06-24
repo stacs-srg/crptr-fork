@@ -6,9 +6,3 @@ Originally developed by [Ahmad Alsadeeqi](https://github.com/alsediqi) (see [ori
 The software is written in Python 3.0 and consists of two main packages:
 - `crptr` - the original Crptr application (updated to Python 3.0)
 - `populations_crptr` - the extensions for use with population data.
-
-## Basic usage
-
-## License 
-Crptr is published under the Mozilla Public License 
-
