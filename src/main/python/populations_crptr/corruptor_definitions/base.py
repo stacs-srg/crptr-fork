@@ -1,8 +1,17 @@
 from crptr.corrupt_records.corrupt_clear_record import CorruptClearRecord
-import crptr.corrupt_value as corrupt_value  # Main classes to corrupt attribute values of records
 import crptr.base_functions as base_functions  # Helper functions
 import crptr.position_functions as position_functions
 
+from crptr.corrupt_values.corrupt_abbreviated_name_forms import CorruptAbbreviatedNameForms
+from crptr.corrupt_values.corrupt_categorical_domain import CorruptCategoricalDomain
+from crptr.corrupt_values.corrupt_categorical_value import CorruptCategoricalValue
+from crptr.corrupt_values.corrupt_date import CorruptDate
+from crptr.corrupt_values.corrupt_missing_value import CorruptMissingValue
+from crptr.corrupt_values.corrupt_unknown_character import CorruptUnknownCharacter
+from crptr.corrupt_values.corrupt_value_edit import CorruptValueEdit
+from crptr.corrupt_values.corrupt_value_keyboard import CorruptValueKeyboard
+from crptr.corrupt_values.corrupt_value_ocr import CorruptValueOCR
+from crptr.corrupt_values.corrupt_value_phonetic import CorruptValuePhonetic
 
 class Corruptor:
     def __init__(self, lookupFilesDir, encoding = 'UTF-8'):
@@ -14,7 +23,7 @@ class Corruptor:
         # =====================================================================
         # Character level
         # =====================================================================
-        self.generalCharacter = corrupt_value.CorruptValueEdit(
+        self.generalCharacter = CorruptValueEdit(
             position_function = position_functions.position_mod_normal,
             char_set_funct = base_functions.char_set_ascii,
             insert_prob = 0.2,
@@ -23,32 +32,32 @@ class Corruptor:
             transpose_prob = 0.1
         )
 
-        self.marritalStatus = corrupt_value.CorruptCategoricalDomain(
+        self.marritalStatus = CorruptCategoricalDomain(
             categories_list=["R", "M", "W", "D", "B", "S"]
         )
 
-        self.surnameMisspell = corrupt_value.CorruptCategoricalValue(
+        self.surnameMisspell = CorruptCategoricalValue(
             lookup_file_name = self.lookupFilesDir + '/surname-misspell.csv',
             has_header_line = False,
             unicode_encoding = self.encoding
         )
 
-        self.keyboardShift = corrupt_value.CorruptValueKeyboard(
+        self.keyboardShift = CorruptValueKeyboard(
             position_function = position_functions.position_mod_normal,
             row_prob = 0.4,
             col_prob = 0.6
         )
 
-        self.unknownCharacter = corrupt_value.CorruptUnknownCharacter(
+        self.unknownCharacter = CorruptUnknownCharacter(
             position_function=position_functions.position_mod_uniform,
             unknown_char="?"
         )
 
-        self.deceasedFlip = corrupt_value.CorruptCategoricalDomain(
+        self.deceasedFlip = CorruptCategoricalDomain(
             categories_list=["D", ""]
         )
 
-        self.ocr = corrupt_value.CorruptValueOCR(
+        self.ocr = CorruptValueOCR(
             lookup_file_name = self.lookupFilesDir + '/ocr-variations.csv',
             has_header_line=False,
             unicode_encoding=self.encoding,
@@ -60,26 +69,26 @@ class Corruptor:
         # =====================================================================
 
 
-        self.abbreviateToInitial = corrupt_value.CorruptAbbreviatedNameForms(
+        self.abbreviateToInitial = CorruptAbbreviatedNameForms(
             num_of_char = 1
         )
 
-        self.sexFlip = corrupt_value.CorruptCategoricalDomain(
+        self.sexFlip = CorruptCategoricalDomain(
             categories_list = ["m", "f"]
         )
 
-        self.missingValue = corrupt_value.CorruptMissingValue(
+        self.missingValue = CorruptMissingValue(
             missing_val='missing'
         )
 
-        self.dateDDMMYYYY = corrupt_value.CorruptDate(
+        self.dateDDMMYYYY = CorruptDate(
             date_order = "yyyy-mm-dd",
             separator = "-",
             components_to_modify = ['day', 'month', 'year'],
             date_corruption_methods = ['add', 'decline', 'swap_digit','swap_comp', 'random', 'first','full_month','abbr_month']
         )
 
-        self.phoneticVariation = corrupt_value.CorruptValuePhonetic(
+        self.phoneticVariation = CorruptValuePhonetic(
             lookup_file_name = self.lookupFilesDir + '/phonetic-variations.csv',
             has_header_line = False,
             unicode_encoding = self.encoding
