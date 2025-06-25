@@ -38,9 +38,8 @@ class CorruptAbbreviatedNameForms(CorruptValue):
        string by randomly selecting an edit operation and position in the
        string where to apply this edit.
     """
-    in_str = in_str.decode("UTF-8")
 
     if (len(in_str) == 0) or (len(in_str) < self.num_of_char):  # Empty string, no modification possible
       return in_str
     new_str = in_str[:self.num_of_char]
-    return str(new_str.encode("UTF-8", errors='strict'))
+    return new_str

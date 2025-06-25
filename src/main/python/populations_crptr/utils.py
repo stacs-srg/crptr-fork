@@ -17,7 +17,8 @@ def readInFile(inputFile):
     return recordsDict
 
 def readInFileAsDict(inputFile):
-    dataset_file = csv.DictReader(open(inputFile))
+    with open(inputFile, 'r', newline='', encoding='utf-8') as f:
+        dataset_file = csv.DictReader(f)
     return list(dataset_file)
 
 def extractLabels(data, idColumnLabel = "rec-id"):
@@ -55,13 +56,15 @@ def removeCommas(dataset):
 
 def removeCommasInFiles(inputFile, outputFile):
 
-    dataset_file = csv.DictReader(open(inputFile))
+    with open(inputFile, 'r', newline='', encoding='utf-8') as f:
+        dataset_file = csv.DictReader(f)
+
     dataset = list(dataset_file)
 
     dataset = removeCommas(dataset)
 
     fieldnames = list(dataset[0].keys())
-    csvfile = open(outputFile, 'wb')
+    csvfile = open(outputFile, 'w', newline='', encoding='utf-8')
     csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
 
@@ -86,13 +89,15 @@ def addCryptIDs(dataset):
 
 def addCryptIDsInFiles(inputFile, outputFile):
 
-    dataset_file = csv.DictReader(open(inputFile))
+    with open(inputFile, 'r', newline='', encoding='utf-8') as f:
+        dataset_file = csv.DictReader(f)
+
     dataset = list(dataset_file)
 
     dataset = addCryptIDs(dataset)
 
     fieldnames = list(dataset[0].keys())
-    csvfile = open(outputFile, 'wb')
+    csvfile = open(outputFile, 'w', newline='', encoding='utf-8')
     csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
 
@@ -106,7 +111,7 @@ def addCryptIDsInFiles(inputFile, outputFile):
 
 def writeToFile(dataset, outputFile):
     fieldnames = list(dataset[0].keys())
-    csvfile = open(outputFile, 'wb')
+    csvfile = open(outputFile, 'w', newline='', encoding='utf-8')
     csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
 
@@ -131,14 +136,16 @@ def removeCryptIDs(dataset, labels):
 
 def removeCryptIDsInFiles(inputFile, outputFile):
 
-    dataset_file = csv.DictReader(open(inputFile))
+    with open(inputFile, 'r', newline='', encoding='utf-8') as f:
+        dataset_file = csv.DictReader(f)
+
     dataset = list(dataset_file)
     dataset_len = str(len(dataset))
 
     dataset = removeCryptIDs(dataset)
 
     fieldnames = list(dataset[0].keys())
-    csvfile = open(outputFile, 'wb')
+    csvfile = open(outputFile, 'w', newline='', encoding='utf-8')
     csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
 
@@ -175,14 +182,16 @@ def removeOrigonalRecordsForWhichDuplicateExists(dataset, labels):
 
 def removeOrigonalRecordsForWhichDuplicateExistsInFiles(inputFile, outputFile):
 
-    dataset_file = csv.DictReader(open(inputFile))
+    with open(inputFile, 'r', newline='', encoding='utf-8') as f:
+        dataset_file = csv.DictReader(f)
+
     dataset = list(dataset_file)
     dataset_len = str(len(dataset))
 
     dataset = removeOrigonalRecordsForWhichDuplicateExists(dataset)
 
     fieldnames = list(dataset[0].keys())
-    csvfile = open(outputFile, 'wb')
+    csvfile = open(outputFile, 'w', newline='', encoding='utf-8')
     csvwriter = csv.DictWriter(csvfile, delimiter=',', fieldnames=fieldnames)
     csvwriter.writerow(dict((fn, fn) for fn in fieldnames))
 
@@ -195,11 +204,10 @@ def removeOrigonalRecordsForWhichDuplicateExistsInFiles(inputFile, outputFile):
 
 
 def outputDictToCSV(labels, dict, outputFile, encoding = 'utf-8'):
-
     rec_id_list = list(dict.keys())
     rec_id_list.sort()
 
-    with open(outputFile, 'wb') as csvfile:
+    with open(outputFile, 'w', newline='', encoding=encoding) as csvfile:
         outputWriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='"', quoting=csv.QUOTE_MINIMAL)
 

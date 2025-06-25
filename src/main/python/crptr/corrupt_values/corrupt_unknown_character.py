@@ -36,10 +36,10 @@ class CorruptUnknownCharacter(CorruptValue):
        string by randomly selecting an edit operation and position in the
        string where to apply this edit.
     """
-    temp = in_str
-    in_str = in_str.decode("UTF-8")
+
     if (len(in_str) == 0):  # Empty string, no modification possible
       return in_str
+    
     mod_pos = self.position_function(in_str)
     new_str = in_str[:mod_pos] + self.unknown_char + in_str[mod_pos + 1:]
-    return str(new_str.encode("UTF-8", errors='strict'))
+    return new_str
