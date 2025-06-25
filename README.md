@@ -22,6 +22,7 @@ cd crptr-fork
 # Creates a virtual environment for running the application, installs the
 # requirements, and the Crptr packages in an editable format.
 python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 pip install -e .
 
