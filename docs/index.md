@@ -6,3 +6,14 @@ Originally developed by [Ahmad Alsadeeqi](https://github.com/alsediqi) (see [ori
 The software is written in Python 3.0 and consists of two main packages:
 - `crptr` - the original Crptr application (updated to Python 3.0)
 - `populations_crptr` - the extensions for use with population data.
+
+## Running Crptr
+- [Crptr usage guides](./usage/index.md)
+- [Basic population corruption guide](./usage/population_corruptor_guide.md)
+
+## Developing Crptr
+For more details on the structure of Crptr and how to modify or build on it:
+- [Crptr development guide](./development/index.md)
+
+## License 
+Crptr is published under the [Mozilla Public License](../LICENSE).

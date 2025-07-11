@@ -2,7 +2,8 @@ import crptr.base_functions as base_functions
 
 
 # ===============================================================================
-# Classes for corrupting a value in a list of attributes (fields) of the data set
+# Base class for classes which corrupt a value in a list of attributes (fields)
+# of the data set.
 # ===============================================================================
 #attr_name_list Need to be included in this model to allow index selection from records for record level corruptions
 

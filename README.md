@@ -27,7 +27,7 @@ pip install -r requirements.txt
 pip install -e .
 
 # Run the corruptor with example input file
-python src/main/python/populations_crptr/population_corruptor.py src/main/resources/example-inputs/TD_300
+python -m populations_crptr.population_corruptor src/main/resources/example-inputs/TD_300
 ```
 
 This will produce output similar to:
