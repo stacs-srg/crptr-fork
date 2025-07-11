@@ -5,7 +5,8 @@ import random
 import crptr.base_functions as base_functions
 
 # =============================================================================
-# Classes for corrupting a value in a single attribute (field) of the data set
+# Base class for classes which corrupt a value in a single attribute (field) of
+# the data set.
 # =============================================================================
 
 class CorruptValue:
